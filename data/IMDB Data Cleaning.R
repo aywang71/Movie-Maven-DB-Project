@@ -13,6 +13,8 @@ str(df)
 
 movies <- df %>% select(id, title, vote_average, vote_count, status, release_date, revenue, budget, runtime, adult, tagline, overview, original_language, popularity, imdb_id, poster_path)
 
+write.csv(movies, "Movies.csv")
+
 genres <- df %>% select(id, genres)
 genres$genre <- genres$genres
 genres$genres <- NULL
