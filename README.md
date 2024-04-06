@@ -1,4 +1,4 @@
-# CIS-5500-Final-Project
+# CIS 5500 Final Project
 
 ## Introduction
 
@@ -23,11 +23,11 @@ Our final project will consist of the following pages:
 
 ## Structure and directory outline
 
-`/data`: Contains flat files that were uploaded to the MySQL database, as well as the data cleaning script (in R). 
+`data/`: Contains flat files that were uploaded to the MySQL database, as well as the data cleaning script (in R). 
 
-`/client`: Contains source code and dependencies for the application frontend. Most of the code will be located in `/client/src`.
+`client/`: Contains source code and dependencies for the application frontend. Most of the code will be located in `client/src/`.
 
-`/server`: Contains source code and dependencies for the application backend.
+`server/`: Contains source code and dependencies for the application backend.
 
 
 ## Running the probject
