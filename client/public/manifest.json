@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Movie Net",
+  "name": "Movie Net Database Application",
   "icons": [
     {
       "src": "favicon.ico",
