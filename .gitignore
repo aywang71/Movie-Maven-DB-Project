@@ -10,7 +10,7 @@
 *build
 
 # miscellaneous
-*data
+*data/.*
 *.Rhistory
 *.DS_Store
 *.env*
