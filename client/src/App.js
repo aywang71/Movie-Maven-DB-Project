@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CssBaseline, ThemeProvider } from '@mui/material'
+import { indigo, amber } from '@mui/material/colors'
+import { createTheme } from "@mui/material/styles";
 
-function App() {
+import NavBar from './components/NavBar';
+import HomePage from './pages/HomePage';
+import BrowsePage from './pages/BrowsePage';
+import SearchPage from './pages/SearchPage';
+import RecommendPage from './pages/RecommendPage';
+
+export const theme = createTheme({
+  palette: {
+    primary: indigo,
+    secondary: amber,
+  },
+});
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/recommend" element={<RecommendPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
-
-export default App;
