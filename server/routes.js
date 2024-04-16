@@ -27,7 +27,59 @@ const example_route = async function(req, res) {
   });
 }
 
+// Route 1: GET /movie/:movie_id
+const movie = async function (req, res) {
+    const mid = req.params.movie_id;
+    const query = `WITH genreID AS (
+        SELECT id, GROUP_CONCAT(genre SEPARATOR ', ') AS genre
+    FROM Genres
+    WHERE id = ${mid}
+    GROUP BY id
+    ),
+    companyID AS (
+        SELECT id, GROUP_CONCAT(company SEPARATOR ', ') AS company
+    FROM ProductionCompanies
+    WHERE id = ${mid}
+    GROUP BY id
+    ),
+    languageID AS (
+        SELECT id, GROUP_CONCAT(language SEPARATOR ', ') AS language
+    FROM SpokenLanguages
+    WHERE id = ${mid}
+    GROUP BY id
+    ),
+    streaming2 AS (
+        SELECT *
+        FROM MovieStreaming NATURAL JOIN Providers
+        ORDER BY display_priority ASC
+    ),
+    streamingID AS (
+        SELECT id, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS poster_paths
+    FROM streaming2
+    WHERE id = ${mid}
+    GROUP BY id
+    )
+    SELECT *
+    FROM Movies
+    LEFT JOIN genreID ON Movies.id = genreID.id
+    LEFT JOIN companyID ON Movies.id = companyID.id
+    LEFT JOIN languageID ON Movies.id = languageID.id
+    LEFT JOIN streamingID ON Movies.id = streamingID.id
+    WHERE Movies.id = ${mid}
+    ORDER BY Movies.popularity DESC
+    `;
+    connection.query(query, (err, data) => {
+        if (err || data.length === 0) {
+            console.log(err);
+            res.status(500).json({error: "Error querying the database"});
+        } else {
+            res.status(200).json(data);
+        }
+    });
+}
+
 // Export routes
 module.exports = {
-    example_route
+    example_route,
+    movie
 }
