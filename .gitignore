@@ -3,3 +3,5 @@ data/Movies.csv
 data/TMDB_movie_dataset_v11.csv
 data/.RData
 *.env*
+server/node_modules/
+server/package-lock.json
