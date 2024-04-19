@@ -27,6 +27,97 @@ const example_route = async function(req, res) {
   });
 }
 
+// Route 1: GET /movie/:movie_id
+const movie = async function (req, res) {
+    const mid = req.params.movie_id;
+    const query = `WITH genreID AS (
+        SELECT id, GROUP_CONCAT(genre SEPARATOR ', ') AS genre
+    FROM Genres
+    WHERE id = ${mid}
+    GROUP BY id
+    ),
+    companyID AS (
+        SELECT id, GROUP_CONCAT(company SEPARATOR ', ') AS company
+    FROM ProductionCompanies
+    WHERE id = ${mid}
+    GROUP BY id
+    ),
+    languageID AS (
+        SELECT id, GROUP_CONCAT(language SEPARATOR ', ') AS language
+    FROM SpokenLanguages
+    WHERE id = ${mid}
+    GROUP BY id
+    ),
+    streaming2 AS (
+        SELECT *
+        FROM MovieStreaming NATURAL JOIN Providers
+        ORDER BY display_priority ASC
+    ),
+    streamingID AS (
+        SELECT id, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
+    FROM streaming2
+    WHERE id = ${mid}
+    GROUP BY id
+    )
+    SELECT *
+    FROM Movies
+    LEFT JOIN genreID ON Movies.id = genreID.id
+    LEFT JOIN companyID ON Movies.id = companyID.id
+    LEFT JOIN languageID ON Movies.id = languageID.id
+    LEFT JOIN streamingID ON Movies.id = streamingID.id
+    WHERE Movies.id = ${mid}
+    ORDER BY Movies.popularity DESC
+    `;
+    connection.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({error: "Error querying the database"});
+        } else if ( data.length === 0) {
+            res.status(500).json({error: "No results returned (nonexistent mid)"});
+        } else {
+            res.status(200).json(data);
+        }
+    });
+}
+
+// Route 8: /groupSingle/:table_name/:filter_group
+const groupSingle = async function (req, res) { //TODO: Might want to hardcode this due to runtime constraints - depends on num aggregations
+    const group = req.params.table_name;
+    const filter = req.params.filter_group;
+    let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `;
+    if (group === "Genres") {
+        query += `from Genres join Movies on Genres.id = Movies.id where genre = '${filter} AND vote_count > 0'`;
+    } else if (group === "ProductionCompanies") {
+        query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter} AND vote_count > 0'`;
+    } else if (group === "SpokenLanguages") {
+        query += `from SpokenLanguages join Movies on SpokenLanguages.id = Movies.id where language = '${filter}' AND vote_count > 0`;
+    } else if (group === "Providers") { // may need to change the query a bit here
+        query = `
+        WITH ids AS (
+            select id from MovieStreaming
+            where platform_id = (select platform_id from Providers
+            where provider = '${filter}')
+        )
+        select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
+        from Movies join ids on ids.id
+        WHERE vote_count > 0
+        `;
+    } else {
+        res.status(500).json({error: "table_name parameter does not exist"});
+    }
+
+    connection.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({error: "Error querying the database"});
+        } else if ( data.length === 0) {
+            res.status(500).json({error: "No results returned (nonexistent filter))"});
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
 // Export routes
 module.exports = {
     example_route
