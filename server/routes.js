@@ -69,17 +69,58 @@ const movie = async function (req, res) {
     ORDER BY Movies.popularity DESC
     `;
     connection.query(query, (err, data) => {
-        if (err || data.length === 0) {
+        if (err) {
             console.log(err);
             res.status(500).json({error: "Error querying the database"});
+        } else if ( data.length === 0) {
+            res.status(500).json({error: "No results returned (nonexistent mid)"});
         } else {
             res.status(200).json(data);
         }
     });
 }
 
+// Route 8: /groupSingle/:table_name/:filter_group
+const groupSingle = async function (req, res) { //TODO: Might want to hardcode this due to runtime constraints - depends on num aggregations
+    const group = req.params.table_name;
+    const filter = req.params.filter_group;
+    const query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity`;
+    if (group === "Genres") {
+        query += `from Genres join Movies on Genres.id = Movies.id where genre = '${filter} AND vote_count > 0'`;
+    } else if (group === "ProductionCompanies") {
+        query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter} AND vote_count > 0'`;
+    } else if (group === "SpokenLanguages") {
+        query += `from SpokenLanguages join Movies on SpokenLanguages.id = Movies.id where language = '${filter}' AND vote_count > 0`;
+    } else if (group === "Providers") { // may need to change the query a bit here
+        query = `
+        WITH ids AS (
+            select id from MovieStreaming
+            where platform_id = (select platform_id from Providers
+            where provider = '${filter}')
+        )
+        select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
+        from Movies join ids on ids.id
+        WHERE vote_count > 0
+        `;
+    } else {
+        res.status(500).json({error: "table_name parameter does not exist"});
+    }
+
+    connection.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({error: "Error querying the database"});
+        } else if ( data.length === 0) {
+            res.status(500).json({error: "No results returned (nonexistent filter))"});
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
 // Export routes
 module.exports = {
     example_route,
-    movie
+    movie, 
+    groupSingle
 }
