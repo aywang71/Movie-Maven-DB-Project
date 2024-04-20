@@ -178,6 +178,70 @@ const groupSingle = async function (req, res) { //maybe make a view due to runti
     })
 }
 
+// Route 9: groupMulti
+const groupMulti = async function (req, res) {
+    //Note: always searches for intersections among all groups
+    //Expected format: 'table1,table2,table3...' 
+    //Filters: 'filter1,filter2,filter3...'
+    //Where the is all attributes corresponding to the table: i.e for genres "('Comedy','Drama'), ... (next filter)"
+    let tables = req.query.tables;
+    tables = tables.split(",");
+    const cols = {
+        Genres: "genre",
+        ProductionCompanies: "company",
+        SpokenLanguages: "language"
+    }
+    let filters = req.query.filters;
+    filters = filters.split("),");
+    let i = 0;
+    while (i < filters.length - 1) {
+        filters[i] += ")";
+        i++;
+    }
+    let query = 'WITH';
+    let ctejoin = `movies AS (
+        select vote_average, vote_count, revenue, budget, runtime, popularity 
+        FROM Movies `;
+    i = 0;
+    while (i < tables.length) {
+        //console.log(i);
+        if (tables[i] === 'Providers') {
+            query += ` Providers2 AS (
+                select platform_id as pid
+                from Providers
+                where provider IN ${filters[i]}),
+                Providers AS (
+                    select id from MovieStreaming
+                    join Providers2 on Providers2.pid = MovieStreaming.platform_id
+                ),`;
+        } else {
+            query += ` ${tables[i]} AS (
+                select id
+                from ${tables[i]}
+                where ${cols[tables[i]]} IN ${filters[i]}),`;
+        }
+        ctejoin += `JOIN ${tables[i]} ON ${tables[i]}.id = Movies.id `;
+        //console.log(query);
+        i++;
+    }
+    query = query + ctejoin + ')';
+    query += `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
+    FROM movies
+    WHERE vote_count > 0`;
+
+    connection.query(query, (err, data) => {
+        console.log(data[0].num_movies);
+        if (err) {
+            console.log(err);
+            res.status(500).json({ error: "Error querying the database" });
+        } else if (data[0].num_movies === 0) {
+            res.status(500).json({ error: "No results returned (nonexistent filter))" });
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
 // Route 10: /platformData/:platform_name
 const platformData = async function (req, res) {
     const plat = req.params.platform_name;
@@ -212,5 +276,6 @@ module.exports = {
     movie,
     groupSingle,
     random,
-    platformData
+    platformData,
+    groupMulti
 }

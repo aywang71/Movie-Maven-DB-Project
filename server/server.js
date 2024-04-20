@@ -14,6 +14,7 @@ app.get('/movie/:movie_id', routes.movie);
 app.get('/groupSingle/:table_name/:filter_group', routes.groupSingle);
 app.get('/random', routes.random);
 app.get('/platformData/:platform_name', routes.platformData);
+app.get('/groupMulti', routes.groupMulti);
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`)
