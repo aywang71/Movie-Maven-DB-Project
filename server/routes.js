@@ -82,7 +82,6 @@ const movie = async function (req, res) {
 }
 
 // Route 6: /random
-
 const random = async function (req, res) {
     const rand = `SELECT id FROM Movies
     ORDER BY RAND()
@@ -133,7 +132,7 @@ const random = async function (req, res) {
             ORDER BY Movies.popularity DESC
             `;
             connection.query(query, (err, data2) => {
-                
+
                 data2[0].id = mid;
                 console.log(data2);
                 if (err) {
@@ -150,7 +149,7 @@ const random = async function (req, res) {
 }
 
 // Route 8: /groupSingle/:table_name/:filter_group
-const groupSingle = async function (req, res) { //TODO: Might want to hardcode this due to runtime constraints - depends on num aggregations
+const groupSingle = async function (req, res) { //maybe make a view due to runtime constraints
     const group = req.params.table_name;
     const filter = req.params.filter_group;
     let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `;
@@ -160,17 +159,6 @@ const groupSingle = async function (req, res) { //TODO: Might want to hardcode t
         query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter}' AND vote_count > 0`;
     } else if (group === "SpokenLanguages") {
         query += `from SpokenLanguages join Movies on SpokenLanguages.id = Movies.id where language = '${filter}' AND vote_count > 0`;
-    } else if (group === "Providers") { // may need to change the query a bit here
-        query = `
-        WITH ids AS (
-            select id from MovieStreaming
-            where platform_id = (select platform_id from Providers
-            where provider = '${filter}')
-        )
-        select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
-        from Movies join ids on ids.id
-        WHERE vote_count > 0
-        `;
     } else {
         res.status(500).json({ error: "table_name parameter does not exist" });
         return;
@@ -190,10 +178,39 @@ const groupSingle = async function (req, res) { //TODO: Might want to hardcode t
     })
 }
 
+// Route 10: /platformData/:platform_name
+const platformData = async function (req, res) {
+    const plat = req.params.platform_name;
+    const query = `WITH platform AS (
+        select platform_id as pid, provider_logo as logo from Providers
+                 where provider = '${plat}'
+    ),
+    
+        ids AS (
+                select * from MovieStreaming
+                join platform on platform.pid = MovieStreaming.platform_id
+            )
+            select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity, logo
+            from Movies join ids on ids.id = Movies.id
+            WHERE vote_count > 0`;
+
+    connection.query(query, (err, data) => {
+        console.log(data[0].num_movies);
+        if (err) {
+            console.log(err);
+            res.status(500).json({ error: "Error querying the database" });
+        } else if (data[0].num_movies === 0) {
+            res.status(500).json({ error: "No results returned (nonexistent filter))" });
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
 // Export routes
 module.exports = {
     example_route,
     movie,
     groupSingle,
-    random
+    random,
+    platformData
 }
