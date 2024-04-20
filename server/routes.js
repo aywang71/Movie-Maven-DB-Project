@@ -213,12 +213,17 @@ const groupMulti = async function (req, res) {
                 Providers AS (
                     select id from MovieStreaming
                     join Providers2 on Providers2.pid = MovieStreaming.platform_id
+                    GROUP BY id
+                    HAVING COUNT(id) = ${filters[i].split(',').length}
                 ),`;
         } else {
             query += ` ${tables[i]} AS (
                 select id
                 from ${tables[i]}
-                where ${cols[tables[i]]} IN ${filters[i]}),`;
+                where ${cols[tables[i]]} IN ${filters[i]}
+                GROUP BY id
+                HAVING COUNT(id) = ${filters[i].split(',').length}
+            ),`;
         }
         ctejoin += `JOIN ${tables[i]} ON ${tables[i]}.id = Movies.id `;
         //console.log(query);
@@ -228,6 +233,8 @@ const groupMulti = async function (req, res) {
     query += `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
     FROM movies
     WHERE vote_count > 0`;
+
+    console.log(query);
 
     connection.query(query, (err, data) => {
         console.log(data[0].num_movies);
