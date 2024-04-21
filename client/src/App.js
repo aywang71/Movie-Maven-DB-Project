@@ -3,7 +3,6 @@ import { CssBaseline, ThemeProvider } from '@mui/material'
 import { createTheme } from "@mui/material/styles";
 
 import NavBar from './components/NavBar';
-import HomePage from './pages/HomePage';
 import BrowsePage from './pages/BrowsePage';
 import SearchPage from './pages/SearchPage';
 import RecommendPage from './pages/RecommendPage';
@@ -26,7 +25,7 @@ export default function App() {
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<BrowsePage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/recommend" element={<RecommendPage />} />
