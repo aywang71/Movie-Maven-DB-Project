@@ -10,9 +10,12 @@ import RecommendPage from './pages/RecommendPage';
 
 export const theme = createTheme({
   palette: {
-    type: 'light',
-    primary: {main: '#000000'},
-    secondary: {main: '#A4CEE7'}
+    primary: {
+      main: '#000000'
+    },
+    secondary: {
+      main: '#A4CEE7'
+    }
   }
 });
 
