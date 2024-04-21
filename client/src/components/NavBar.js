@@ -1,42 +1,43 @@
-import { AppBar, Container, Toolbar, Typography } from '@mui/material'
-import { NavLink } from 'react-router-dom';
-
-function NavText({ href, text, isMain }) {
-  return (
-    <Typography
-      variant={isMain ? 'h5' : 'h7'}
-      noWrap
-      style={{
-        marginRight: '30px',
-        fontFamily: 'monospace',
-        fontWeight: 700,
-        letterSpacing: '.3rem',
-      }}
-    >
-      <NavLink
-        to={href}
-        style={{
-          color: 'inherit',
-          textDecoration: 'none',
-        }}
-      >
-        {text}
-      </NavLink>
-    </Typography>
-  )
-}
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import MovieIcon from '@mui/icons-material/Movie';
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
+  const navigate = useNavigate();
+  const items = [
+    {label: "Browse", route: "/browse"},
+    {label: "Search", route: "/search"},
+    {label: "Recommend", route: "/recommend"}
+  ]
+
   return (
-    <AppBar position='static'>
-      <Container maxWidth='xl'>
-        <Toolbar disableGutters>
-          <NavText href='/' text='MOVIE NET' isMain />
-          <NavText href='/browse' text='Browse' />
-          <NavText href='/search' text='Search' />
-          <NavText href='/recommend' text='Recommend' />
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <MovieIcon size="large" sx={{ mx: 2 , color: "inherit" }} />
+          <Typography
+            variant="h6"
+            component="div" 
+            sx={{ flexGrow: 1, color: 'inherit'}}
+          >
+            Movie Net
+          </Typography>
+          {items.map((item) => (
+            <Button
+              key={item.label}
+              onClick={() => navigate(item.route)}
+              sx={{ my: 2, mx: 2, color: 'inherit', display: 'block' }}
+            >
+              {item.label}
+            </Button>
+          ))}
         </Toolbar>
-      </Container>
-    </AppBar>
+      </AppBar>
+    </Box>
   );
 }
