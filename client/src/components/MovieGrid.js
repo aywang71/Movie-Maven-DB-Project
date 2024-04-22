@@ -7,6 +7,7 @@ export default function MovieGrid({movies}) {
       {movies.map(movie => (
         <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
             <Box position="relative">
+            {/* TODO: `Replace with movie poster. */}
             <Paper
               elevation={3}
               sx={{

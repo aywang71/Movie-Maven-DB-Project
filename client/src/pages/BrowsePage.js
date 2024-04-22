@@ -3,6 +3,7 @@ import { Box, Container, Typography } from '@mui/material';
 
 import MovieGrid from '../components/MovieGrid';
 
+// TODO: Replace with API calls.
 const topMovies = [
   { id: 1, title: 'Movie 1' },
   { id: 2, title: 'Movie 2' },

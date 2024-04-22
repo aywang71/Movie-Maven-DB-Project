@@ -21,7 +21,7 @@ export default function NavBar() {
         <Toolbar>
           <MovieIcon size="large" sx={{ mx: 2 , color: "inherit" }} />
           <Typography
-            variant="h6"
+            variant="h5"
             component="div" 
             sx={{ flexGrow: 1, color: 'inherit'}}
           >
