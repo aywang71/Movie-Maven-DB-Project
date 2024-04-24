@@ -343,7 +343,7 @@ const random = async function (req, res) {
                     res.status(500).json({ error: "No results returned (nonexistent mid)" });
                 } else {
                     data2[0].id = mid;
-                    res.status(200).json(data2);
+                    res.status(200).json(data2[0]);
                 }
             })
         }

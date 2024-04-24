@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { createTheme } from "@mui/material/styles";
 
@@ -7,6 +7,7 @@ import BrowsePage from './pages/BrowsePage';
 import SearchPage from './pages/SearchPage';
 import RecommendPage from './pages/RecommendPage';
 import MoviePage from "./pages/MoviePage";
+import RandomMoviePage from "./components/RandomMovie";
 
 export const theme = createTheme({
   palette: {
@@ -54,7 +55,7 @@ export default function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/recommend" element={<RecommendPage />} />
           <Route path="/movie/:id" element={<MoviePage />} />
-          <Route path="/movie/random" element={<Navigate to="/" />} />
+          <Route path="/movie/random" element={<RandomMoviePage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
