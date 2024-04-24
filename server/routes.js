@@ -69,23 +69,23 @@ const movie = async function (req, res) {
     ORDER BY Movies.popularity DESC
     `;
     connection.query(query, (err, data) => {
-        data[0].id = mid;
         if (err) {
             console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data.length === 0) {
             res.status(500).json({ error: "No results returned (nonexistent mid)" });
         } else {
-            res.status(200).json(data);
+            data[0].id = mid;
+            res.status(200).json(data[0]);
         }
     });
 }
 
 // Route 2: Filter movies
-const filtered_movies = async function(req, res) {
+const filtered_movies = async function (req, res) {
     const page = req.query.page ?? 1;
     const offsetAmt = (page - 1) * 50;
-  
+
     const minAvg = req.query.min_avg ?? 0;
     const maxAvg = req.query.max_avg ?? 10;
     const minCount = req.query.min_count ?? 0;
@@ -100,8 +100,8 @@ const filtered_movies = async function(req, res) {
     const minDate = req.query.min_date ?? '1800-01-01';
     const maxDate = req.query.max_date ?? '2050-01-01';
     const searchTitle = req.query.title ?? '';
-  
-  
+
+
     connection.query(`
     SELECT id, title, poster_path, release_date, vote_average
     FROM Movies
@@ -124,15 +124,15 @@ const filtered_movies = async function(req, res) {
             res.status(200).json(data);
         }
     });
-  }
+}
 
 // Route 3: Movie recommendations
-const movie_recommendations = async function(req, res) {
-  const moviesListArray = req.query.movies.split(',');
-  const moviesList = '(' + moviesListArray.join(',') + ')';
-  const numMovies = moviesListArray.length;
+const movie_recommendations = async function (req, res) {
+    const moviesListArray = req.query.movies.split(',');
+    const moviesList = '(' + moviesListArray.join(',') + ')';
+    const numMovies = moviesListArray.length;
 
-  connection.query(`
+    connection.query(`
   WITH Genre_Ratios AS (
     SELECT genre, COUNT(id) / ${numMovies} AS ratio
     FROM Genres
@@ -167,38 +167,38 @@ const movie_recommendations = async function(req, res) {
   ORDER BY final_score DESC, popularity DESC
   LIMIT 50;
   `, (err, data) => {
-      if (err || data.length == 0) {
-          console.log(err);
-          res.status(500).json({});
-      } else {
-          res.status(200).json(data);
-      }
-  });
+        if (err || data.length == 0) {
+            console.log(err);
+            res.status(500).json({});
+        } else {
+            res.status(200).json(data);
+        }
+    });
 }
 
 // Route 4: Binge Watching
-const binge_watching = async function(req, res) {
+const binge_watching = async function (req, res) {
     const timeAvailable = req.query.time_available ?? 120;
     const maxRuntime = req.query.max_runtime ?? 180;
     const minRuntime = req.query.min_runtime ?? 60;
     const listGenres = req.query.genres_list;
     let genreCondition = 'AND 1 = 1';
-  
+
     if (listGenres != null) {
         const genresListArray = listGenres.split(',');
         const genresList = '(' + genresListArray.map(genre => `'${genre}'`).join(',') + ')';
         genreCondition = `AND genre IN ${genresList}`;
     }
-  
+
     const listProviders = req.query.providers_list;
     let providerCondition = 'AND 1 = 1';
-  
+
     if (listProviders != null) {
         const providersListArray = listProviders.split(',');
         const providersList = '(' + providersListArray.join(',') + ')';
         providerCondition = `AND platform_id IN ${providersList}`
     }
-  
+
     connection.query(`
     WITH Filtered_Movies AS (
         SELECT DISTINCT id, title, poster_path, runtime, vote_average
@@ -235,17 +235,17 @@ const binge_watching = async function(req, res) {
             res.status(200).json(data);
         }
     });
-  }
+}
 
 // Route 5: Streaming services recommendations
-const provider_recommendations = async function(req, res) {
-  const moviesListArray = (req.query.movies ?? '').split(',');
-  const moviesList = '(' + moviesListArray.join(',') + ')';
-  const numMovies = moviesListArray.length;
-  const streamingTypesArray = (req.query.types ?? 'free,ads,flatrate').split(',')
-  const streamingTypes = '(' + streamingTypesArray.map(type => `'${type}'`).join(',') + ')';
+const provider_recommendations = async function (req, res) {
+    const moviesListArray = (req.query.movies ?? '').split(',');
+    const moviesList = '(' + moviesListArray.join(',') + ')';
+    const numMovies = moviesListArray.length;
+    const streamingTypesArray = (req.query.types ?? 'free,ads,flatrate').split(',')
+    const streamingTypes = '(' + streamingTypesArray.map(type => `'${type}'`).join(',') + ')';
 
-  connection.query(`
+    connection.query(`
   WITH Matching_Offers AS (
     SELECT *
     FROM MovieStreaming
@@ -275,13 +275,13 @@ const provider_recommendations = async function(req, res) {
     JOIN Provider_Movie_List pm ON pi.platform_id = pm.platform_id
     ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
   `, (err, data) => {
-      if (err || data.length == 0) {
-          console.log(err);
-          res.status(500).json({});
-      } else {
-          res.status(200).json(data);
-      }
-  });
+        if (err || data.length == 0) {
+            console.log(err);
+            res.status(500).json({});
+        } else {
+            res.status(200).json(data);
+        }
+    });
 }
 
 // Route 6: /random
@@ -335,8 +335,6 @@ const random = async function (req, res) {
             ORDER BY Movies.popularity DESC
             `;
             connection.query(query, (err, data2) => {
-
-                data2[0].id = mid;
                 console.log(data2);
                 if (err) {
                     console.log(err);
@@ -344,6 +342,7 @@ const random = async function (req, res) {
                 } else if (data2.length === 0) {
                     res.status(500).json({ error: "No results returned (nonexistent mid)" });
                 } else {
+                    data2[0].id = mid;
                     res.status(200).json(data2);
                 }
             })
@@ -355,7 +354,7 @@ const random = async function (req, res) {
 const userList = async function (req, res) {
     let movies = req.query.movies ?? '';
     if (movies === '') {
-        res.status(500).json({ error: "No movies parameter in API call"});
+        res.status(500).json({ error: "No movies parameter in API call" });
     } else {
         let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
         from Movies
@@ -366,7 +365,7 @@ const userList = async function (req, res) {
             query += `'${movies[i]}',`;
             i++;
         }
-        query = query.substring(0, query.length-1);
+        query = query.substring(0, query.length - 1);
         query += ')';
         connection.query(query, (err, data) => {
             if (err) {
@@ -522,6 +521,6 @@ module.exports = {
     movie_recommendations,
     provider_recommendations,
     binge_watching,
-    filtered_movies, 
+    filtered_movies,
     userList
 }
