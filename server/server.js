@@ -20,6 +20,7 @@ app.get('/movie_recommendations', routes.movie_recommendations);
 app.get('/binge_watching', routes.binge_watching);
 app.get('/provider_recommendations', routes.provider_recommendations);
 app.get('/userList', routes.userList);
+app.get('/quickSearch', routes.quickSearch);
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`)

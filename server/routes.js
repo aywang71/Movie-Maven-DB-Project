@@ -498,12 +498,26 @@ const platformData = async function (req, res) {
             WHERE vote_count > 0`;
 
     connection.query(query, (err, data) => {
-        console.log(data[0].num_movies);
+        //console.log(data[0].num_movies);
         if (err) {
             console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
+// Route 11 : /quickSearch/:title
+const quickSearch = async function (req, res) {
+    const title = req.params.title;
+    const query = `select * from ViewMoviesPopular where title like '%${title}%' limit 10;`
+    connection.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
         }
@@ -522,5 +536,6 @@ module.exports = {
     provider_recommendations,
     binge_watching,
     filtered_movies,
-    userList
+    userList,
+    quickSearch
 }
