@@ -54,10 +54,10 @@ const movie = async function (req, res) {
         ORDER BY display_priority ASC
     ),
     streamingID AS (
-        SELECT id, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
+        SELECT id, type, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
     FROM streaming2
     WHERE id = ${mid}
-    GROUP BY id
+    GROUP BY id, type
     )
     SELECT *
     FROM Movies
@@ -320,10 +320,10 @@ const random = async function (req, res) {
                 ORDER BY display_priority ASC
             ),
             streamingID AS (
-                SELECT id, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
+                SELECT id, type, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
             FROM streaming2
             WHERE id = ${mid}
-            GROUP BY id
+            GROUP BY id, type
             )
             SELECT *
             FROM Movies
