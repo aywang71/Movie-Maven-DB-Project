@@ -286,7 +286,7 @@ const provider_recommendations = async function (req, res) {
 
 // Route 6: /random
 const random = async function (req, res) {
-    const rand = `SELECT id FROM Moviesata
+    const rand = `SELECT id FROM ViewRandom
     ORDER BY RAND()
     LIMIT 1`;
     connection.query(rand, (err, data) => {
