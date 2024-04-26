@@ -513,7 +513,7 @@ const platformData = async function (req, res) {
 // Route 11 : /quickSearch/:title
 const quickSearch = async function (req, res) {
     const title = req.params.title;
-    const query = `select * from ViewMoviesPopular where title like '%${title}%' limit 10;`
+    const query = `select id, title, release_date, poster_path from ViewMoviesPopular where title like '%${title}%' limit 10;`
     connection.query(query, (err, data) => {
         if (err) {
             console.log(err);
