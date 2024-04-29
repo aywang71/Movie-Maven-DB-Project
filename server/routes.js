@@ -317,7 +317,7 @@ const provider_recommendations = async function (req, res) {
 
 // Route 6: /random
 const random = async function (req, res) {
-    const rand = `SELECT id FROM Movies
+    const rand = `SELECT id FROM ViewRandom
     ORDER BY RAND()
     LIMIT 1`;
     connection.query(rand, (err, data) => {
@@ -555,6 +555,36 @@ const quickSearch = async function (req, res) {
     })
 }
 
+// Route 12: /topMovies/genres/:genre
+const topGenres = async function (req, res) {
+    const genre = req.params.genre;
+    const query = `select * from ViewGenreMovies where genre = '${genre}';`;
+    connection.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ error: "Error querying the database" });
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
+// Route 13: /topMovies/providers/:provider
+const topProviders = async function (req, res) {
+    const provider = req.params.provider;
+    const query = `select *
+    from ViewProviderMovies
+    where platform_id = (select platform_id from Providers where provider = '${provider}');`;
+    connection.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ error: "Error querying the database" });
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
 // Export routes
 module.exports = {
     example_route,
@@ -568,5 +598,7 @@ module.exports = {
     binge_watching,
     filtered_movies,
     userList,
-    quickSearch
+    quickSearch,
+    topGenres,
+    topProviders
 }
