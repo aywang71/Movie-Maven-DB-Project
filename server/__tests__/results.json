@@ -1,0 +1,28 @@
+{
+    "example": {
+        "count":1013846
+    },
+    "movie": {
+        "id":"12",
+        "title":"Finding Nemo",
+        "vote_average":7.824,
+        "vote_count":18061,
+        "status":"Released",
+        "release_date":"2003-05-30T04:00:00.000Z",
+        "revenue":940336000,
+        "budget":94000000,
+        "runtime":100,
+        "adult":0,
+        "tagline":"There are 3.7 trillion fish in the ocean. They're looking for one.",
+        "overview":"Nemo, an adventurous young clownfish, is unexpectedly taken from his Great Barrier Reef home to a dentist's office aquarium. It's up to his worrisome father Marlin and a friendly but forgetful fish Dory to bring Nemo home -- meeting vegetarian sharks, surfer dude turtles, hypnotic jellyfish, hungry seagulls, and more along the way.",
+        "original_language":"en",
+        "popularity":55.456,
+        "imdb_id":"tt0266543",
+        "poster_path":"/ggQ6o8X5984OCh3kZi2UIJQJY5y.jpg",
+        "genre":"Animation, Family",
+        "company":"Pixar",
+        "language":"English",
+        "provider":"Disney Plus, Apple TV, Amazon Video, Google Play Movies, YouTube, Vudu, Microsoft Store, AMC on Demand",
+        "provider_paths":"/7YPdUs60C9qQQQfOFCgxpnF07D9.jpg, /9ghgSC0MA082EL6HLCW3GalykFD.jpg, /seGSXajazLMCKGB5hnRCidtjay1.jpg, /8z7rC8uIDaTM91X0ZfkRf04ydj2.jpg, /pTnn5JwWr4p3pG8H6VrpiQo7Vs0.jpg, /nVzxU8EPk0aXqQkBZniVA2kat1I.jpg, /5vfrJQgNe9UnHVgVNAwZTy0Jo9o.jpg, /1g3ULbVMEW8OVKOJymLvfboCrMv.jpg"
+    }
+}
