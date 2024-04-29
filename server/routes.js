@@ -90,32 +90,63 @@ const filtered_movies = async function (req, res) {
     const maxAvg = req.query.max_avg ?? 10;
     const minCount = req.query.min_count ?? 0;
     const maxCount = req.query.max_count ?? 35000;
-    const minRev = req.query.min_revenue ?? 0;
-    const maxRev = req.query.max_revenue ?? 3000000000;
-    const minBud = req.query.min_budget ?? 0;
-    const maxBud = req.query.max_budget ?? 900000000;
-    const minRT = req.query.min_runtime ?? 0;
-    const maxRT = req.query.max_runtime ?? 14400;
     const isAdult = req.query.is_adult ?? 0;
     const minDate = req.query.min_date ?? '1800-01-01';
     const maxDate = req.query.max_date ?? '2050-01-01';
     const searchTitle = req.query.title ?? '';
+    const listGenres = req.query.genres_list;
+    let genreSub = '';
+    let genreCondition = '';
 
+    if (listGenres != null) {
+        const genresListArray = listGenres.split(',');
+
+        for (i = 0; i < genresListArray.length; i++) {
+            if (i == genresListArray.length - 1) {
+                const str = `
+                (SELECT id
+                FROM Genres USE INDEX (MovieIDGenre)
+                WHERE genre = '${genresListArray[i]}')
+                `
+                genreSub += str;
+            } else {
+                const str = `
+                (SELECT id
+                FROM Genres USE INDEX (MovieIDGenre)
+                WHERE genre = '${genresListArray[i]}')
+                INTERSECT
+                `
+                genreSub += str;
+            }
+        }
+
+        genreCondition = `AND id IN (${genreSub})`;
+    }
+
+    const listProviders = req.query.providers_list;
+    let providerSub= '';
+    let providerCondition = '';
+
+    if (listProviders != null) {
+        const providersListArray = listProviders.split(',');
+        const providersList = '(' + providersListArray.join(',') + ')';
+        
+        providerSub = `SELECT id FROM MovieStreaming WHERE platform_id IN ${providersList}`
+        providerCondition = `AND id IN (${providerSub})`;
+    }
 
     connection.query(`
     SELECT id, title, poster_path, release_date, vote_average
     FROM Movies
-    WHERE title LIKE '%${searchTitle} %'
-       AND vote_average BETWEEN ${minAvg} AND ${maxAvg}
-       AND vote_count BETWEEN ${minCount} AND ${maxCount}
-       AND revenue BETWEEN ${minRev} AND ${maxRev}
-       AND budget BETWEEN ${minBud} AND ${maxBud}
-       AND runtime BETWEEN ${minRT} AND ${maxRT}
-       AND adult <= ${isAdult}
-       AND release_date BETWEEN DATE('${minDate}') AND DATE('${maxDate}')
+    WHERE title LIKE '${searchTitle}%'
+      AND vote_average BETWEEN ${minAvg} AND ${maxAvg}
+      AND vote_count BETWEEN ${minCount} AND ${maxCount}
+      AND adult <= ${isAdult}
+      AND release_date BETWEEN DATE('${minDate}') AND DATE('${maxDate}')
+      ${genreCondition} ${providerCondition}
     ORDER BY vote_count DESC
     LIMIT 50
-    OFFSET ${offsetAmt}
+    OFFSET ${offsetAmt};
     `, (err, data) => {
         if (err || data.length == 0) {
             console.log(err);
@@ -133,40 +164,40 @@ const movie_recommendations = async function (req, res) {
     const numMovies = moviesListArray.length;
 
     connection.query(`
-  WITH Genre_Ratios AS (
-    SELECT genre, COUNT(id) / ${numMovies} AS ratio
-    FROM Genres
-    WHERE id IN ${moviesList}
-    GROUP BY genre
-    ORDER BY ratio DESC
-  ), Relevant_Movies AS (
-      SELECT id, title, vote_count, vote_average, poster_path, popularity
-      FROM Movies
-      WHERE vote_count > 35
-          AND poster_path < 'None'
-  ),Matching_Movies AS (
-      SELECT id, title, vote_count, vote_average, poster_path, popularity, SUM(GR.ratio) AS match_score
-      FROM Genres G
-          NATURAL JOIN Genre_Ratios GR
-          NATURAL JOIN Relevant_Movies
-      WHERE G.id NOT IN ${moviesList}
-      GROUP BY G.id
-  ), Matching_Movies_Filtered AS (
-      SELECT *
-      FROM Matching_Movies
-      WHERE match_score > (SELECT AVG(match_score) FROM Matching_Movies)
-  ), Final_Info AS (
-      SELECT *, MM.vote_count / MV.max_vc AS vc_ratio, MM.vote_average / MA.max_va AS va_ratio
-      FROM Matching_Movies_Filtered MM,
-          (SELECT MAX(vote_count) AS max_vc FROM Matching_Movies_Filtered) AS MV,
-          (SELECT MAX(vote_average) AS max_va FROM Matching_Movies_Filtered) AS MA
+    WITH Genre_Ratios AS (
+        SELECT genre, COUNT(id) / ${numMovies} AS ratio
+        FROM Genres USE INDEX (MovieIDGenre)
+        WHERE id IN ${moviesList}
+        GROUP BY genre
+        ORDER BY ratio DESC
+    ), Relevant_Movies AS (
+        SELECT id, title, vote_count, vote_average, poster_path, popularity, release_date
+        FROM Movies USE INDEX (Movie_VC_Poster)
+        WHERE vote_count > 50
+            AND poster_path < 'None'
+    ),Matching_Movies AS (
+        SELECT id, title, vote_count, vote_average, poster_path, popularity, release_date, SUM(GR.ratio) AS match_score
+        FROM Genres G
+            NATURAL JOIN Genre_Ratios GR
+            NATURAL JOIN Relevant_Movies
+        WHERE G.id NOT IN ${moviesList}
+        GROUP BY G.id
+    ), Matching_Movies_Filtered AS (
+        SELECT *
+        FROM Matching_Movies
+        WHERE match_score > (SELECT AVG(match_score) FROM Matching_Movies)
+    ), Final_Info AS (
+        SELECT *, MM.vote_count / MV.max_vc AS vc_ratio, MM.vote_average / MA.max_va AS va_ratio
+        FROM Matching_Movies_Filtered MM,
+            (SELECT MAX(vote_count) AS max_vc FROM Matching_Movies_Filtered) AS MV,
+            (SELECT MAX(vote_average) AS max_va FROM Matching_Movies_Filtered) AS MA
 
-  )
-  SELECT id, title, poster_path, SQRT(match_score) + (0.5 * vc_ratio) + (0.2 * va_ratio) AS final_score
-  FROM Final_Info
-  ORDER BY final_score DESC, popularity DESC
-  LIMIT 50;
-  `, (err, data) => {
+    )
+    SELECT id, title, poster_path, release_date, vote_average
+    FROM Final_Info
+    ORDER BY SQRT(match_score) + (0.5 * vc_ratio) + (0.2 * va_ratio) DESC
+    LIMIT 50;
+    `, (err, data) => {
         if (err || data.length == 0) {
             console.log(err);
             res.status(500).json({});
@@ -182,7 +213,7 @@ const binge_watching = async function (req, res) {
     const maxRuntime = req.query.max_runtime ?? 180;
     const minRuntime = req.query.min_runtime ?? 60;
     const listGenres = req.query.genres_list;
-    let genreCondition = 'AND 1 = 1';
+    let genreCondition = '';
 
     if (listGenres != null) {
         const genresListArray = listGenres.split(',');
@@ -191,7 +222,7 @@ const binge_watching = async function (req, res) {
     }
 
     const listProviders = req.query.providers_list;
-    let providerCondition = 'AND 1 = 1';
+    let providerCondition = '';
 
     if (listProviders != null) {
         const providersListArray = listProviders.split(',');
@@ -201,18 +232,17 @@ const binge_watching = async function (req, res) {
 
     connection.query(`
     WITH Filtered_Movies AS (
-        SELECT DISTINCT id, title, poster_path, runtime, vote_average
+        SELECT DISTINCT id, title, poster_path, runtime, release_date, vote_average
         FROM Movies
             NATURAL JOIN Genres
             NATURAL JOIN MovieStreaming
         WHERE vote_count > 500
             AND runtime <= ${maxRuntime}
             AND runtime >= ${minRuntime}
-            ${genreCondition}
-            ${providerCondition}
+            ${genreCondition} ${providerCondition}
         ORDER BY vote_average DESC
     ), Selected_Movies AS (
-        SELECT id, title, poster_path, runtime, vote_average,
+        SELECT id, title, poster_path, runtime, release_date, vote_average,
               CASE
                   WHEN @total_time + runtime <= ${timeAvailable} THEN @total_time := @total_time + runtime
                   ELSE @total_time
@@ -224,6 +254,7 @@ const binge_watching = async function (req, res) {
     SELECT id,
           title,
           poster_path,
+          release_date,
           cumulative_time,
           AVG(vote_average) OVER (ORDER BY vote_average DESC) AS avg_vote
     FROM Selected_Movies;
@@ -246,35 +277,35 @@ const provider_recommendations = async function (req, res) {
     const streamingTypes = '(' + streamingTypesArray.map(type => `'${type}'`).join(',') + ')';
 
     connection.query(`
-  WITH Matching_Offers AS (
-    SELECT *
-    FROM MovieStreaming
-    WHERE id IN ${moviesList}
-        AND type IN ${streamingTypes}
-    ), Provider_Count AS (
-        SELECT platform_id, COUNT(DISTINCT id) AS num_movies
-        FROM Matching_Offers
-        GROUP BY platform_id
-    ), Providers_Info AS (
-        SELECT platform_id, provider, provider_logo, 
-            ROUND(100 * num_movies / ${numMovies}, 2) AS pct_movies, 
-            display_priority
-        FROM Providers
-            NATURAL JOIN Provider_Count
-        ORDER BY pct_movies DESC, display_priority ASC
-        LIMIT 10
-    ), Provider_Movie_List AS (
-        SELECT platform_id, GROUP_CONCAT(CONCAT_WS(',', type, id, title, poster_path) SEPARATOR ';') AS movie_list
-        FROM Matching_Offers
-            NATURAL JOIN Movies
-        GROUP BY platform_id
-    )
-    SELECT pi.platform_id, pi.provider, pi.provider_logo, pi.pct_movies, 
-        pm.movie_list
-    FROM Providers_Info pi
-    JOIN Provider_Movie_List pm ON pi.platform_id = pm.platform_id
-    ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
-  `, (err, data) => {
+    WITH Matching_Offers AS (
+        SELECT *
+        FROM MovieStreaming
+        WHERE id IN ${moviesList}
+            AND type IN ${streamingTypes}
+        ), Provider_Count AS (
+            SELECT platform_id, COUNT(DISTINCT id) AS num_movies
+            FROM Matching_Offers
+            GROUP BY platform_id
+        ), Providers_Info AS (
+            SELECT platform_id, provider, provider_logo, 
+                ROUND(100 * num_movies / ${numMovies}, 2) AS pct_movies, 
+                display_priority
+            FROM Providers
+                NATURAL JOIN Provider_Count
+            ORDER BY pct_movies DESC, display_priority ASC
+            LIMIT 10
+        ), Provider_Movie_List AS (
+            SELECT platform_id, GROUP_CONCAT(CONCAT_WS(',', type, id, title, poster_path) SEPARATOR ';') AS movie_list
+            FROM Matching_Offers
+                NATURAL JOIN Movies
+            GROUP BY platform_id
+        )
+        SELECT pi.platform_id, pi.provider, pi.provider_logo, pi.pct_movies, 
+            pm.movie_list
+        FROM Providers_Info pi
+        JOIN Provider_Movie_List pm ON pi.platform_id = pm.platform_id
+        ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
+    `, (err, data) => {
         if (err || data.length == 0) {
             console.log(err);
             res.status(500).json({});
