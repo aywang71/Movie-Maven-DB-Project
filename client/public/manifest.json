@@ -1,6 +1,6 @@
 {
-  "short_name": "Movie Net",
-  "name": "Movie Net Database Application",
+  "short_name": "Movie Maven",
+  "name": "Movie Maven Database Application",
   "icons": [
     {
       "src": "favicon.svg",
