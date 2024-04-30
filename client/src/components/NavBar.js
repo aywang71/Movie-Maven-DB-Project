@@ -25,7 +25,7 @@ export default function NavBar() {
             component="div"
             sx={{ flexGrow: 1, color: 'inherit' }}
           >
-            Movie Net
+            Movie Maven
           </Typography>
           {items.map((item) => (
             <Button
