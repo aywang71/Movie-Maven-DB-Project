@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating } from "@mui/material";
+import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating, CircularProgress } from "@mui/material";
 import Label from "../components/Label";
 import { useTheme } from "@emotion/react";
 
@@ -11,6 +11,7 @@ const MovieInformationPage = () => {
   const [movieData, setMovieData] = useState();
   const [rating, setRating] = useState(0);
   const theme = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
   const route = id ? `/movie/${id}` : `/random`;
 
   // Fetch movie data on load
@@ -21,7 +22,11 @@ const MovieInformationPage = () => {
         setMovieData(respJson);
         setRating(respJson?.vote_average / 2);
       })
-      .catch((error) => console.error(error));
+      .then(() => setIsLoading(false))
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
   }, [id]);
 
   const infoList = [
@@ -39,6 +44,11 @@ const MovieInformationPage = () => {
 
   return (
     <>
+    {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </div>
+      ) : (
       <Grid container spacing={2} sx={{ m: 'auto', maxWidth: 1000, p: 5 }}>
         {/* Movie into */}
         <Grid item xs={7}>
@@ -123,7 +133,8 @@ const MovieInformationPage = () => {
           </Grid>
         }
       </Grid >
-    </>
+    )}
+  </>
   );
 };
 
