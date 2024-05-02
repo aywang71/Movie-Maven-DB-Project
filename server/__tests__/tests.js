@@ -3,18 +3,6 @@ const supertest = require('supertest');
 const app = require('../server');
 const results = require('./results.json');
 
-expect.extend({
-  nullOrString(received) {
-    return received === null || typeof received === 'String' ? {
-      message: () => `expected ${received} to be String or null`,
-      pass: true
-    } : {
-      message: () => `expected ${received} to be String or null`,
-      pass: false
-    };
-  }
-});
-
 test('GET /movie/12', async () => {
   await supertest(app).get('/movie/12')
     .expect(200)
