@@ -1,4 +1,4 @@
-const RecommendPage = (props) => {
+const BingeWatchPage = () => {
     return (
         <div >
            
@@ -6,4 +6,4 @@ const RecommendPage = (props) => {
     );
 };
 
-export default RecommendPage;
+export default BingeWatchPage;

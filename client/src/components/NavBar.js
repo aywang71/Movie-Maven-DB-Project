@@ -1,18 +1,16 @@
-import { useState } from 'react';
 import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
 import MovieIcon from '@mui/icons-material/Movie';
 import { useNavigate } from 'react-router-dom';
-import RandomMovie from './RandomMovie';
 
 
-export default function NavBar() {
+const NavBar = () => {
 
-  const [showRandom, setShowRandom] = useState(false);
   const navigate = useNavigate();
   const items = [
     { label: "Browse", route: "/browse" },
     { label: "Search", route: "/search" },
-    { label: "Recommend", route: "/recommend" }
+    { label: "Recommend", route: "/recommend" },
+    { label: "Random", route: "/movieInformation" }
   ]
 
   return (
@@ -36,16 +34,10 @@ export default function NavBar() {
               {item.label}
             </Button>
           ))}
-          <Button
-            key="Random"
-            onClick={() => setShowRandom(true)}
-            sx={{ my: 2, mx: 2, color: 'inherit', display: 'block' }}
-          >
-            Random
-          </Button>
         </Toolbar>
       </AppBar>
-      {showRandom && <RandomMovie setShowRandom={setShowRandom} />}
     </Box>
   );
 }
+
+export default NavBar;

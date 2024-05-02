@@ -6,15 +6,16 @@ import { useTheme } from "@emotion/react";
 
 import { formatDate, formatMoney } from "../utils";
 
-const MoviePage = () => {
+const MovieInformationPage = () => {
   const { id } = useParams();
   const [movieData, setMovieData] = useState();
   const [rating, setRating] = useState(0);
   const theme = useTheme();
+  const route = id ? `/movie/${id}` : `/random`;
 
   // Fetch movie data on load
   useEffect(() => {
-    fetch(`http://localhost:8080/movie/${id}`)
+    fetch(`http://localhost:8080` + route)
       .then((resp) => resp.json())
       .then((respJson) => {
         setMovieData(respJson);
@@ -126,4 +127,4 @@ const MoviePage = () => {
   );
 };
 
-export default MoviePage;
+export default MovieInformationPage;

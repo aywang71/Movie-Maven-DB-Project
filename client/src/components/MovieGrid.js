@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 
-export default function MovieGrid({movies}) {
+const MovieGrid = ({movies}) => {
   return (
     <Grid container spacing={3}>
       {movies.map(movie => (
@@ -37,3 +37,5 @@ export default function MovieGrid({movies}) {
     </Grid>
   );
 };
+
+export default MovieGrid;
