@@ -12,38 +12,23 @@ const connection = mysql.createConnection({
 });
 connection.connect((err) => err && console.log(err));
 
-// Route 0: GET /example/:params
-const example_route = async function (req, res) {
-    connection.query(`
-    SELECT COUNT(*) as num
-    FROM Movies
-  `, (err, data) => {
-        if (err || data.length === 0) {
-            console.log(err);
-            res.status(500).json({});
-        } else {
-            res.status(200).json({ count: data[0].num });
-        }
-    });
-}
-
 // Route 1: GET /movie/:movie_id
 const movie = async function (req, res) {
     const mid = req.params.movie_id;
     const query = `WITH genreID AS (
-        SELECT id, GROUP_CONCAT(genre SEPARATOR ', ') AS genre
+        SELECT id, COALESCE(GROUP_CONCAT(genre SEPARATOR ', '), '') AS genre
     FROM Genres
     WHERE id = ${mid}
     GROUP BY id
     ),
     companyID AS (
-        SELECT id, GROUP_CONCAT(company SEPARATOR ', ') AS company
+        SELECT id, COALESCE(GROUP_CONCAT(company SEPARATOR ', '), '') AS company
     FROM ProductionCompanies
     WHERE id = ${mid}
     GROUP BY id
     ),
     languageID AS (
-        SELECT id, GROUP_CONCAT(language SEPARATOR ', ') AS language
+        SELECT id, COALESCE(GROUP_CONCAT(language SEPARATOR ', '), '') AS language
     FROM SpokenLanguages
     WHERE id = ${mid}
     GROUP BY id
@@ -54,12 +39,17 @@ const movie = async function (req, res) {
         ORDER BY display_priority ASC
     ),
     streamingID AS (
-        SELECT id, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
+        SELECT id, COALESCE(GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', '), '') AS provider, COALESCE(GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', '), '') AS provider_paths
     FROM streaming2
     WHERE id = ${mid}
     GROUP BY id
     )
-    SELECT *
+    SELECT *, COALESCE(genre, '') AS genre,
+    COALESCE(company, '') AS company,
+    COALESCE(language, '') AS language,
+    COALESCE(provider, '') AS provider,
+    COALESCE(release_date, '') AS release_date,
+    COALESCE(provider_paths, '') AS provider_paths
     FROM Movies
     LEFT JOIN genreID ON Movies.id = genreID.id
     LEFT JOIN companyID ON Movies.id = companyID.id
@@ -70,7 +60,7 @@ const movie = async function (req, res) {
     `;
     connection.query(query, (err, data) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data.length === 0) {
             res.status(500).json({ error: "No results returned (nonexistent mid)" });
@@ -124,13 +114,13 @@ const filtered_movies = async function (req, res) {
     }
 
     const listProviders = req.query.providers_list;
-    let providerSub= '';
+    let providerSub = '';
     let providerCondition = '';
 
     if (listProviders != null) {
         const providersListArray = listProviders.split(',');
         const providersList = '(' + providersListArray.join(',') + ')';
-        
+
         providerSub = `SELECT id FROM MovieStreaming WHERE platform_id IN ${providersList}`
         providerCondition = `AND id IN (${providerSub})`;
     }
@@ -149,7 +139,7 @@ const filtered_movies = async function (req, res) {
     OFFSET ${offsetAmt};
     `, (err, data) => {
         if (err || data.length == 0) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({});
         } else {
             res.status(200).json(data);
@@ -306,9 +296,9 @@ const provider_recommendations = async function (req, res) {
         JOIN Provider_Movie_List pm ON pi.platform_id = pm.platform_id
         ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
     `, (err, data) => {
-        if (err || data.length == 0) {
-            console.log(err);
-            res.status(500).json({});
+        if (err || data == undefined) {
+           // console.log(err);
+            res.status(500).json({"error": "Error querying the database"});
         } else {
             res.status(200).json(data);
         }
@@ -321,26 +311,23 @@ const random = async function (req, res) {
     ORDER BY RAND()
     LIMIT 1`;
     connection.query(rand, (err, data) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ error: "Error querying the database" });
-        } else {
-            const mid = data[0].id;
-            console.log(mid);
-            const query = `WITH genreID AS (
-                SELECT id, GROUP_CONCAT(genre SEPARATOR ', ') AS genre
+
+        const mid = data[0].id;
+        //console.log(mid);
+        const query = `WITH genreID AS (
+                SELECT id, COALESCE(GROUP_CONCAT(genre SEPARATOR ', '), '') AS genre
             FROM Genres
             WHERE id = ${mid}
             GROUP BY id
             ),
             companyID AS (
-                SELECT id, GROUP_CONCAT(company SEPARATOR ', ') AS company
+                SELECT id, COALESCE(GROUP_CONCAT(company SEPARATOR ', '), '') AS company
             FROM ProductionCompanies
             WHERE id = ${mid}
             GROUP BY id
             ),
             languageID AS (
-                SELECT id, GROUP_CONCAT(language SEPARATOR ', ') AS language
+                SELECT id, COALESCE(GROUP_CONCAT(language SEPARATOR ', '), '') AS language
             FROM SpokenLanguages
             WHERE id = ${mid}
             GROUP BY id
@@ -351,12 +338,17 @@ const random = async function (req, res) {
                 ORDER BY display_priority ASC
             ),
             streamingID AS (
-                SELECT id, GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', ') AS provider, GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', ') AS provider_paths
+                SELECT id, COALESCE(GROUP_CONCAT( DISTINCT provider ORDER BY display_priority SEPARATOR ', '), '') AS provider, COALESCE(GROUP_CONCAT( DISTINCT provider_logo ORDER BY display_priority SEPARATOR ', '), '') AS provider_paths
             FROM streaming2
             WHERE id = ${mid}
             GROUP BY id
             )
-            SELECT *
+            SELECT *, COALESCE(genre, '') AS genre,
+            COALESCE(company, '') AS company,
+            COALESCE(language, '') AS language,
+            COALESCE(provider, '') AS provider,
+            COALESCE(release_date, '') AS release_date,
+            COALESCE(provider_paths, '') AS provider_paths
             FROM Movies
             LEFT JOIN genreID ON Movies.id = genreID.id
             LEFT JOIN companyID ON Movies.id = companyID.id
@@ -365,23 +357,21 @@ const random = async function (req, res) {
             WHERE Movies.id = ${mid}
             ORDER BY Movies.popularity DESC
             `;
-            connection.query(query, (err, data2) => {
-                console.log(data2);
-                if (err) {
-                    console.log(err);
-                    res.status(500).json({ error: "Error querying the database" });
-                } else if (data2.length === 0) {
-                    res.status(500).json({ error: "No results returned (nonexistent mid)" });
-                } else {
-                    data2[0].id = mid;
-                    res.status(200).json(data2[0]);
-                }
-            })
-        }
+        connection.query(query, (err, data2) => {
+            //console.log(data2);
+            if (err) {
+                //console.log(err);
+                res.status(500).json({ error: "Error querying the database" });
+            } else {
+                data2[0].id = mid;
+                res.status(200).json(data2[0]);
+            }
+        })
+
     })
 }
 
-//Route 7: /userList
+//Route 7: /userList/?movies=
 const userList = async function (req, res) {
     let movies = req.query.movies ?? '';
     if (movies === '') {
@@ -400,7 +390,7 @@ const userList = async function (req, res) {
         query += ')';
         connection.query(query, (err, data) => {
             if (err) {
-                console.log(err);
+                //console.log(err);
                 res.status(500).json({ error: "Error querying the database" });
             } else if (data[0].num_movies === 0) {
                 res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -429,9 +419,9 @@ const groupSingle = async function (req, res) { //maybe make a view due to runti
     //console.log(query);
 
     connection.query(query, (err, data) => {
-        console.log(data[0].num_movies);
+        //console.log(data[0].num_movies);
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -497,12 +487,12 @@ const groupMulti = async function (req, res) {
     FROM movies
     WHERE vote_count > 0`;
 
-    console.log(query);
+    //console.log(query);
 
     connection.query(query, (err, data) => {
-        console.log(data[0].num_movies);
+        //console.log(data[0].num_movies);
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -531,7 +521,7 @@ const platformData = async function (req, res) {
     connection.query(query, (err, data) => {
         //console.log(data[0].num_movies);
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -547,7 +537,7 @@ const quickSearch = async function (req, res) {
     const query = `select id, title, release_date, poster_path from ViewMoviesPopular where title like '%${title}%' limit 10;`
     connection.query(query, (err, data) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -561,7 +551,7 @@ const topGenres = async function (req, res) {
     const query = `select * from ViewGenreMovies where genre = '${genre}';`;
     connection.query(query, (err, data) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -572,12 +562,14 @@ const topGenres = async function (req, res) {
 // Route 13: /topMovies/providers/:provider
 const topProviders = async function (req, res) {
     const provider = req.params.provider;
+    //console.log(provider);
     const query = `select *
     from ViewProviderMovies
     where platform_id = (select platform_id from Providers where provider = '${provider}');`;
+    //console.log(query);
     connection.query(query, (err, data) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -587,7 +579,6 @@ const topProviders = async function (req, res) {
 
 // Export routes
 module.exports = {
-    example_route,
     movie,
     groupSingle,
     random,
