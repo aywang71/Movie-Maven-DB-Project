@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-// import muiThemeable from 'material-ui/styles/muiThemeable';
 
 import { useTheme } from "@emotion/react";
 
@@ -27,4 +26,3 @@ const Label = ({ text, styles, background, m, mr, ml, mt, mb }) => {
 };
 
 export default Label;
-

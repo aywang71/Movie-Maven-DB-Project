@@ -3,11 +3,17 @@ import { CssBaseline, ThemeProvider } from '@mui/material'
 import { createTheme } from "@mui/material/styles";
 
 import NavBar from './components/NavBar';
+
+import BingeWatchPage from './pages/BingeWatchPage';
 import BrowsePage from './pages/BrowsePage';
+import CategoryAnalyticsPage from './pages/CategoryAnalyticsPage';
+import GenreInformationPage from './pages/GenreInformationPage';
+import MovieAnalyticsPage from './pages/MovieAnalyticsPage';
+import MovieInformationPage from "./pages/MovieInformationPage";
+import MovieRecommendationPage from "./pages/MovieRecommendationPage";
+import PlatformInformationPage from "./pages/PlatformInformationPage";
+import PlatformRecommendationPage from './pages/PlatformRecommendationPage';
 import SearchPage from './pages/SearchPage';
-import RecommendPage from './pages/RecommendPage';
-import MoviePage from "./pages/MoviePage";
-import RandomMoviePage from "./components/RandomMovie";
 
 export const theme = createTheme({
   palette: {
@@ -51,11 +57,17 @@ export default function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<BrowsePage />} />
+          <Route path="/bingeWatch" element={<BingeWatchPage />} />
           <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/categoryAnalytics" element={<CategoryAnalyticsPage />} />
+          <Route path="/genreInformation" element={<GenreInformationPage />} />
+          <Route path="/movieAnalytics" element={<MovieAnalyticsPage />} />
+          <Route path="/movieInformation" element={<MovieInformationPage />} />
+          <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
+          <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
+          <Route path="/platformInformation" element={<PlatformInformationPage />} />
+          <Route path="/platformRecommendation" element={<PlatformRecommendationPage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/recommend" element={<RecommendPage />} />
-          <Route path="/movie/:id" element={<MoviePage />} />
-          <Route path="/movie/random" element={<RandomMoviePage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

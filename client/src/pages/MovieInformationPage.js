@@ -1,26 +1,32 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating } from "@mui/material";
+import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating, CircularProgress } from "@mui/material";
 import Label from "../components/Label";
 import { useTheme } from "@emotion/react";
 
 import { formatDate, formatMoney } from "../utils";
 
-const MoviePage = () => {
+const MovieInformationPage = () => {
   const { id } = useParams();
   const [movieData, setMovieData] = useState();
   const [rating, setRating] = useState(0);
   const theme = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
+  const route = id ? `/movie/${id}` : `/random`;
 
   // Fetch movie data on load
   useEffect(() => {
-    fetch(`http://localhost:8080/movie/${id}`)
+    fetch(`http://localhost:8080` + route)
       .then((resp) => resp.json())
       .then((respJson) => {
         setMovieData(respJson);
         setRating(respJson?.vote_average / 2);
       })
-      .catch((error) => console.error(error));
+      .then(() => setIsLoading(false))
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
   }, [id]);
 
   const infoList = [
@@ -38,6 +44,11 @@ const MoviePage = () => {
 
   return (
     <>
+    {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </div>
+      ) : (
       <Grid container spacing={2} sx={{ m: 'auto', maxWidth: 1000, p: 5 }}>
         {/* Movie into */}
         <Grid item xs={7}>
@@ -122,8 +133,9 @@ const MoviePage = () => {
           </Grid>
         }
       </Grid >
-    </>
+    )}
+  </>
   );
 };
 
-export default MoviePage;
+export default MovieInformationPage;

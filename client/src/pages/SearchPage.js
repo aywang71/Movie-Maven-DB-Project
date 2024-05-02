@@ -1,4 +1,4 @@
-const SearchPage = (props) => {
+const SearchPage = () => {
     return (
         <div >
            
