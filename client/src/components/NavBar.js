@@ -49,6 +49,13 @@ const NavBar = () => {
           >
             Movie Maven
           </Typography>
+          {/* Random Button */}
+          <Button
+            onClick={() => navigate("/movieInformation")}
+            sx={{ my: 2, mx: 2, color: 'inherit', display: 'block' }}
+          >
+            Random Movie
+          </Button>
           {/* Browse Button */}
           <Button
             onClick={() => navigate("/browse")}

@@ -12,13 +12,13 @@ const MovieInformationPage = () => {
   const [rating, setRating] = useState(0);
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
-  const route = id ? `/movie/${id}` : `/random`;
 
   // Fetch movie data on load
   useEffect(() => {
+    const route = id ? `/movie/${id}` : '/random';
     fetch(`http://localhost:8080` + route)
-      .then((resp) => resp.json())
-      .then((respJson) => {
+      .then(resp => resp.json())
+      .then(respJson => {
         setMovieData(respJson);
         setRating(respJson?.vote_average / 2);
       })

@@ -1,45 +1,61 @@
-import React from 'react';
-import { Box, Container, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 
 import MovieGrid from '../components/MovieGrid';
 
-// TODO: Replace with API calls.
-const topMovies = [
-  { id: 1, title: 'Movie 1' },
-  { id: 2, title: 'Movie 2' },
-  { id: 3, title: 'Movie 3' },
-];
-
-const topMoviesByGenres = {
-  Action: [
-    { id: 4, title: 'Action Movie 1' },
-    { id: 5, title: 'Action Movie 2' },
-  ],
-  Comedy: [
-    { id: 6, title: 'Comedy Movie 1' },
-    { id: 7, title: 'Comedy Movie 2' },
-  ],
-  Drama: [
-    { id: 8, title: 'Drama Movie 1' },
-    { id: 9, title: 'Drama Movie 2' },
-  ],
-};
-
 const BrowsePage = () => {
+  const [topMovies, setTopMovies] = useState([]);
+  const [topMoviesByGenres, setTopMoviesByGenres] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      // Fetch top movies
+      fetch(`http://localhost:8080/topMovies`)
+        .then(response => response.json())
+        .then(data => setTopMovies(data))
+        .catch(error => console.error('Error fetching top movies:', error));
+
+      // Fetch top movies by genres
+      const genres = ['Action', 'Animation', 'Comedy', 'Drama', 'Family', 'Horror'];
+      const moviesByGenres = {};
+      for (const genre of genres) {
+        try {
+          const response = await fetch(`http://localhost:8080/topMovies/genres/${genre}`);
+          const data = await response.json();
+          moviesByGenres[genre] = data;
+        } catch (error) {
+          console.error(`Error fetching ${genre} movies:`, error);
+        }
+      }
+      setTopMoviesByGenres(moviesByGenres);
+      setIsLoading(false);
+    };
+    fetchMovies();
+  }, []);
+
   return (
-    <Container  maxWidth="lg">
-      <Box my={4}>
-        <Typography variant="h4" gutterBottom>Top Movies</Typography>
-        <MovieGrid movies={topMovies} />
-      </Box>
-      
-      {Object.entries(topMoviesByGenres).map(([genre, movies]) => (
-        <Box key={genre} my={4}>
-          <Typography variant="h4" gutterBottom>{genre}</Typography>
-          <MovieGrid movies={movies} />
+    <>
+    {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </div>
+    ) : (
+      <Container maxWidth="lg">
+        <Box my={4}>
+          <Typography variant="h4" gutterBottom>Top Movies</Typography>
+          <MovieGrid movies={topMovies} />
         </Box>
-      ))}
-    </Container>
+        
+        {Object.entries(topMoviesByGenres).map(([genre, movies]) => (
+          <Box key={genre} my={4}>
+            <Typography variant="h4" gutterBottom>{genre}</Typography>
+            <MovieGrid movies={movies} />
+          </Box>
+        ))}
+      </Container>
+    )}
+    </>
   );
 };
 
