@@ -548,7 +548,9 @@ const quickSearch = async function (req, res) {
 // Route 12: /topMovies/genres/:genre
 const topGenres = async function (req, res) {
     const genre = req.params.genre;
-    const query = `select * from ViewGenreMovies where genre = '${genre}';`;
+    const query = `select * from ViewGenreMovies where genre = '${genre}'
+    order by RAND()
+    limit 24;`;
     connection.query(query, (err, data) => {
         if (err) {
             //console.log(err);
@@ -565,7 +567,26 @@ const topProviders = async function (req, res) {
     //console.log(provider);
     const query = `select *
     from ViewProviderMovies
-    where platform_id = (select platform_id from Providers where provider = '${provider}');`;
+    where platform_id = (select platform_id from Providers where provider = '${provider}')
+    order by RAND()
+    limit 24;`;
+    //console.log(query);
+    connection.query(query, (err, data) => {
+        if (err) {
+            //console.log(err);
+            res.status(500).json({ error: "Error querying the database" });
+        } else {
+            res.status(200).json(data);
+        }
+    })
+}
+
+// Route 14: /topMovies
+const topMovies = async function (req, res) {
+    const query = `select *
+    from ViewGenreMovies
+    order by RAND()
+    limit 24;`;
     //console.log(query);
     connection.query(query, (err, data) => {
         if (err) {
@@ -591,5 +612,6 @@ module.exports = {
     userList,
     quickSearch,
     topGenres,
-    topProviders
+    topProviders,
+    topMovies
 }

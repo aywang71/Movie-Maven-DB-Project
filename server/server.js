@@ -22,6 +22,7 @@ app.get('/userList', routes.userList);
 app.get('/quickSearch/:title', routes.quickSearch);
 app.get('/topMovies/genres/:genre', routes.topGenres);
 app.get('/topMovies/providers/:provider', routes.topProviders);
+app.get('/topMovies', routes.topMovies);
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`)
