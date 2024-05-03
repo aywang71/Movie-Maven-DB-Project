@@ -5,6 +5,7 @@ import Label from "../components/Label";
 import { useTheme } from "@emotion/react";
 
 import { formatDate, formatMoney } from "../utils";
+import GridComponent from '../components/GridComponent';
 
 const MovieInformationPage = () => {
   const { id } = useParams();
@@ -12,6 +13,7 @@ const MovieInformationPage = () => {
   const [rating, setRating] = useState(0);
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
+  const [providers, setProviders] = useState([]);
 
   // Fetch movie data on load
   useEffect(() => {
@@ -21,6 +23,10 @@ const MovieInformationPage = () => {
       .then(respJson => {
         setMovieData(respJson);
         setRating(respJson?.vote_average / 2);
+        const providersNames = respJson.provider.split(', ');
+        const providersPaths = respJson.provider_paths.split(', ');
+        const providers = providersNames.map((name, i) => ({ id: name, title: name, provider_path: providersPaths[i] }));
+        setProviders(providers);
       })
       .then(() => setIsLoading(false))
       .catch((error) => {
@@ -40,7 +46,6 @@ const MovieInformationPage = () => {
     { prop: 'Runtime', value: movieData?.hey },
     { prop: 'Production Companies', value: movieData?.company }
   ];
-
 
   return (
     <>
@@ -119,6 +124,13 @@ const MovieInformationPage = () => {
               </Table>
             </Card>
           </Box>
+          {/* Providers */}
+          {!!movieData.provider &&
+            <Box my={4}>
+              <Typography variant="h4" gutterBottom>Stream On </Typography>
+              <GridComponent items={providers} type="provider" />
+            </Box>
+          }
         </Grid>
 
         {/* Movie Poster */}
