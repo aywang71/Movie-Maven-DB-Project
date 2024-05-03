@@ -6,7 +6,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 const GridComponent = ({ items, type }) => {
   const imageKey = type === 'movie' ? 'poster_path' : 'provider_path';
-  const linkTo = type === 'movie' ? '/movieInformation/' : '/providerInformation/';
+  const linkTo = type === 'movie' ? '/movieInformation/' : '/platformInformation/';
 
   // State to track current page
   const [currentPage, setCurrentPage] = useState(1);

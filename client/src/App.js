@@ -65,7 +65,7 @@ export default function App() {
           <Route path="/movieInformation" element={<MovieInformationPage />} />
           <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
           <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
-          <Route path="/platformInformation" element={<PlatformInformationPage />} />
+          <Route path="/platformInformation/:platform" element={<PlatformInformationPage />} />
           <Route path="/platformRecommendation" element={<PlatformRecommendationPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>
