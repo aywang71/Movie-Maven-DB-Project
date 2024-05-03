@@ -4,21 +4,24 @@ import { Link } from 'react-router-dom';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-const MovieGrid = ({ movies }) => {
+const GridComponent = ({ items, type }) => {
+  const imageKey = type === 'movie' ? 'poster_path' : 'provider_path';
+  const linkTo = type === 'movie' ? '/movieInformation/' : '/providerInformation/';
+
   // State to track current page
   const [currentPage, setCurrentPage] = useState(1);
   // Number of items per page (one row)
   const itemsPerPage = 6;
 
   // Calculate total number of pages
-  const totalPages = Math.ceil(movies.length / itemsPerPage);
+  const totalPages = Math.ceil(items.length / itemsPerPage);
 
   // Calculate starting and ending index for current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
 
-  // Slice movies array to display only items for current page
-  const currentMovies = movies.slice(startIndex, endIndex);
+  // Slice items array to display only items for current page
+  const currentItems = items.slice(startIndex, endIndex);
 
   // Function to handle pagination button click
   const handlePageChange = (newPage) => {
@@ -28,13 +31,13 @@ const MovieGrid = ({ movies }) => {
   return (
     <>
       <Grid container spacing={3}>
-        {currentMovies.map((movie) => (
-          <Grid item key={movie.id} xs={2}>
+        {currentItems.map((item) => (
+          <Grid item key={item.id} xs={2}>
             <Box>
-              <Link to={`/movieInformation/${movie.id}`}>
+              <Link to={linkTo + item.id}>
                 <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
+                  src={`https://image.tmdb.org/t/p/w500${item[imageKey]}`}
+                  alt={item.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </Link>
@@ -69,4 +72,4 @@ const MovieGrid = ({ movies }) => {
   );
 };
 
-export default MovieGrid;
+export default GridComponent;
