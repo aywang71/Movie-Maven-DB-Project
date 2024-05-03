@@ -62,7 +62,7 @@ export default function App() {
           <Route path="/categoryAnalytics" element={<CategoryAnalyticsPage />} />
           <Route path="/genreInformation/:genre" element={<GenreInformationPage />} />
           <Route path="/movieAnalytics" element={<MovieAnalyticsPage />} />
-          <Route path="/movieInformation" element={<MovieInformationPage />} />
+          <Route path="/randomMovie" element={<MovieInformationPage />} />
           <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
           <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
           <Route path="/platformInformation/:platform" element={<PlatformInformationPage />} />
