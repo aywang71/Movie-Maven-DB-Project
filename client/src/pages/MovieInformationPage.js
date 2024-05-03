@@ -12,22 +12,24 @@ const MovieInformationPage = () => {
   const [rating, setRating] = useState(0);
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
-  const route = id ? `/movie/${id}` : `/random`;
 
   // Fetch movie data on load
   useEffect(() => {
-    fetch(`http://localhost:8080` + route)
-      .then((resp) => resp.json())
-      .then((respJson) => {
-        setMovieData(respJson);
-        setRating(respJson?.vote_average / 2);
-      })
-      .then(() => setIsLoading(false))
-      .catch((error) => {
-        console.error(error);
-        setIsLoading(false);
-      });
-  }, [route]);
+    const route = id ? `/movie/${id}` : `/random`;
+    const fetchInfo = async () => {
+      fetch(`http://localhost:8080` + route)
+        .then((resp) => resp.json())
+        .then((respJson) => {
+          setMovieData(respJson);
+          setRating(respJson?.vote_average / 2);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      setIsLoading(false);
+    };
+    fetchInfo();
+  }, [id]);
 
   const infoList = [
     { prop: 'Runtime', value: movieData?.runtime && (movieData?.runtime + ' min') },
