@@ -30,11 +30,8 @@ const MovieInformationPage = () => {
         const providers = providersNames.map((name, i) => ({ id: name, title: name, provider_path: providersPaths[i] }));
         setProviders(providers);
       })
-      .then(() => setIsLoading(false))
-      .catch((error) => {
-        console.error(error);
-        setIsLoading(false);
-      });
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
   }, [id]);
 
   const infoList = [
