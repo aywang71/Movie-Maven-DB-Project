@@ -27,7 +27,7 @@ const MovieInformationPage = () => {
         console.error(error);
         setIsLoading(false);
       });
-  }, [id]);
+  }, [route]);
 
   const infoList = [
     { prop: 'Runtime', value: movieData?.runtime && (movieData?.runtime + ' min') },
