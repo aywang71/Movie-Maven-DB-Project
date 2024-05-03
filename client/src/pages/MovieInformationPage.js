@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating, CircularProgress } from "@mui/material";
+import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating, CircularProgress, Link } from "@mui/material";
 import Label from "../components/Label";
 import { useTheme } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 
 import { formatDate, formatMoney } from "../utils";
 import GridComponent from '../components/GridComponent';
 
 const MovieInformationPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [movieData, setMovieData] = useState();
   const [rating, setRating] = useState(0);
@@ -97,7 +99,12 @@ const MovieInformationPage = () => {
               {!!movieData?.genre && (
                 <>
                   <Stack direction="row" spacing={1} paddingLeft={2} padding={1}>
-                    {movieData?.genre.split(", ").map((g) => <Chip key={g} label={g} />)}
+                    {/* Iterate over genres and make them clickable */}
+                    {movieData?.genre.split(", ").map((genre) => (
+                        <Link key={genre} to={`/genre/${genre}`}>
+                          <Chip label={genre} clickable onClick={() => navigate(`/genreInformation/${genre}`)} />
+                        </Link>
+                    ))}
                   </Stack>
                   <Divider sx={{ marginTop: 1, marginBottom: 1 }} />
                 </>
