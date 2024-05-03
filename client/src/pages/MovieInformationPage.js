@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating, CircularProgress } from "@mui/material";
+import { Grid, Box, Typography, Divider, Button, Stack, Chip, Card, Table, TableBody, TableRow, TableCell, Rating, CircularProgress, Link } from "@mui/material";
 import Label from "../components/Label";
 import { useTheme } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 
 import { formatDate, formatMoney } from "../utils";
+import GridComponent from '../components/GridComponent';
 
 const MovieInformationPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [movieData, setMovieData] = useState();
   const [rating, setRating] = useState(0);
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
+  const [providers, setProviders] = useState([]);
 
   // Fetch movie data on load
   useEffect(() => {
@@ -21,6 +25,10 @@ const MovieInformationPage = () => {
       .then(respJson => {
         setMovieData(respJson);
         setRating(respJson?.vote_average / 2);
+        const providersNames = respJson.provider.split(', ');
+        const providersPaths = respJson.provider_paths.split(', ');
+        const providers = providersNames.map((name, i) => ({ id: name, title: name, provider_path: providersPaths[i] }));
+        setProviders(providers);
       })
       .then(() => setIsLoading(false))
       .catch((error) => {
@@ -40,7 +48,6 @@ const MovieInformationPage = () => {
     { prop: 'Runtime', value: movieData?.hey },
     { prop: 'Production Companies', value: movieData?.company }
   ];
-
 
   return (
     <>
@@ -92,7 +99,12 @@ const MovieInformationPage = () => {
               {!!movieData?.genre && (
                 <>
                   <Stack direction="row" spacing={1} paddingLeft={2} padding={1}>
-                    {movieData?.genre.split(", ").map((g) => <Chip key={g} label={g} />)}
+                    {/* Iterate over genres and make them clickable */}
+                    {movieData?.genre.split(", ").map((genre) => (
+                        <Link key={genre} to={`/genre/${genre}`}>
+                          <Chip label={genre} clickable onClick={() => navigate(`/genreInformation/${genre}`)} />
+                        </Link>
+                    ))}
                   </Stack>
                   <Divider sx={{ marginTop: 1, marginBottom: 1 }} />
                 </>
@@ -119,6 +131,13 @@ const MovieInformationPage = () => {
               </Table>
             </Card>
           </Box>
+          {/* Providers */}
+          {!!movieData.provider &&
+            <Box my={4}>
+              <Typography variant="h4" gutterBottom>Stream On </Typography>
+              <GridComponent items={providers} type="provider" />
+            </Box>
+          }
         </Grid>
 
         {/* Movie Poster */}

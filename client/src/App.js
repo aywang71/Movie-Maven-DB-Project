@@ -60,12 +60,12 @@ export default function App() {
           <Route path="/bingeWatch" element={<BingeWatchPage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/categoryAnalytics" element={<CategoryAnalyticsPage />} />
-          <Route path="/genreInformation" element={<GenreInformationPage />} />
+          <Route path="/genreInformation/:genre" element={<GenreInformationPage />} />
           <Route path="/movieAnalytics" element={<MovieAnalyticsPage />} />
           <Route path="/movieInformation" element={<MovieInformationPage />} />
           <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
           <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
-          <Route path="/platformInformation" element={<PlatformInformationPage />} />
+          <Route path="/platformInformation/:platform" element={<PlatformInformationPage />} />
           <Route path="/platformRecommendation" element={<PlatformRecommendationPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>

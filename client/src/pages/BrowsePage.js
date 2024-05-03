@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, CircularProgress, Container, Typography } from '@mui/material';
 
-import MovieGrid from '../components/MovieGrid';
+import GridComponent from '../components/GridComponent';
 
 const BrowsePage = () => {
   const [topMovies, setTopMovies] = useState([]);
@@ -44,13 +44,13 @@ const BrowsePage = () => {
       <Container maxWidth="lg">
         <Box my={4}>
           <Typography variant="h4" gutterBottom>Top Movies</Typography>
-          <MovieGrid movies={topMovies} />
+          <GridComponent items={topMovies} type="movie" />
         </Box>
         
         {Object.entries(topMoviesByGenres).map(([genre, movies]) => (
           <Box key={genre} my={4}>
             <Typography variant="h4" gutterBottom>{genre}</Typography>
-            <MovieGrid movies={movies} />
+            <GridComponent items={movies} type="movie" />
           </Box>
         ))}
       </Container>
