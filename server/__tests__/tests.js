@@ -43,14 +43,6 @@ test('GET /platformData/Netflix', async () => {
     })
 }, 15000);
 
-test('GET /topMovies/genres', async () => {
-  await supertest(app).get('/topMovies/genres/Action')
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toStrictEqual(results.topAction)
-    })
-}, 15000);
-
 test('GET /quickSearch/title', async () => {
   await supertest(app).get('/quickSearch/John')
     .expect(200)
@@ -140,14 +132,6 @@ test('GET /groupMulti3', async () => {
     })
 }, 15000);
 
-test('GET /topProvider', async () => {
-  await supertest(app).get('/topMovies/providers/Netflix')
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toStrictEqual(results.topProvider)
-    })
-}, 15000);
-
 test('GET /userList2', async () => {
   await supertest(app).get('/userList?movies=1234')
     .expect(500)
@@ -220,22 +204,6 @@ test('GET /quickSearch500', async () => {
     })
 }, 15000);
 
-test('GET /topMovies500', async () => {
-  await supertest(app).get("/topMovies/genres/'")
-    .expect(500)
-    .then((res) => {
-      expect(res.body).toStrictEqual(results.serverError)
-    })
-}, 15000);
-
-test('GET /topProviders500', async () => {
-  await supertest(app).get("/topMovies/providers/'")
-    .expect(500)
-    .then((res) => {
-      expect(res.body).toStrictEqual(results.serverError)
-    })
-}, 15000);
-
 test('movie 500', async () => {
   await supertest(app).get("/movie/'")
     .expect(500)
@@ -291,3 +259,63 @@ test('GET /random', async () => {
     });
 }, 15000);
 
+test('GET /topMovies/genres/comedy', async () => {
+  await supertest(app).get('/topMovies/genres/comedy')
+    .expect(200)
+    .then((res) => {
+      res.body.forEach((val) => expect(val).toStrictEqual({
+        genre: "Comedy",
+        id: expect.any(Number),
+        title: expect.any(String),
+        poster_path: expect.any(String),
+        release_date: expect.any(String),
+        vote_average: expect.any(Number)
+      }));
+    })
+}, 15000);
+
+test('GET /topMovies/providers/netflix', async () => {
+  await supertest(app).get('/topMovies/providers/netflix')
+    .expect(200)
+    .then((res) => {
+      res.body.forEach((val) => expect(val).toStrictEqual({
+        platform_id: 8,
+        id: expect.any(Number),
+        title: expect.any(String),
+        poster_path: expect.any(String),
+        release_date: expect.any(String),
+        vote_average: expect.any(Number)
+      }));
+    })
+}, 15000);
+
+test('GET /topMovies', async () => {
+  await supertest(app).get('/topMovies')
+    .expect(200)
+    .then((res) => {
+      res.body.forEach((val) => expect(val).toStrictEqual({
+        genre: expect.any(String),
+        id: expect.any(Number),
+        title: expect.any(String),
+        poster_path: expect.any(String),
+        release_date: expect.any(String),
+        vote_average: expect.any(Number)
+      }));
+    })
+}, 15000);
+
+test('GET /topMoviesByGenre500', async () => {
+  await supertest(app).get("/topMovies/genres/'")
+    .expect(500)
+    .then((res) => {
+      expect(res.body).toStrictEqual(results.serverError)
+    })
+}, 15000);
+
+test('GET /topMoviesByProvider500', async () => {
+  await supertest(app).get("/topMovies/providers/'")
+    .expect(500)
+    .then((res) => {
+      expect(res.body).toStrictEqual(results.serverError)
+    })
+}, 15000);
