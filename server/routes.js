@@ -94,14 +94,14 @@ const filtered_movies = async function (req, res) {
             if (i == genresListArray.length - 1) {
                 const str = `
                 (SELECT id
-                FROM Genres USE INDEX (MovieIDGenre)
+                FROM Genres
                 WHERE genre = '${genresListArray[i]}')
                 `
                 genreSub += str;
             } else {
                 const str = `
                 (SELECT id
-                FROM Genres USE INDEX (MovieIDGenre)
+                FROM Genres
                 WHERE genre = '${genresListArray[i]}')
                 INTERSECT
                 `
