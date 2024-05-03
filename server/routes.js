@@ -83,7 +83,6 @@ const filtered_movies = async function (req, res) {
     const isAdult = req.query.is_adult ?? 0;
     const minDate = req.query.min_date ?? '1800-01-01';
     const maxDate = req.query.max_date ?? '2050-01-01';
-    const searchTitle = req.query.title ?? '';
     const listGenres = req.query.genres_list;
     let genreSub = '';
     let genreCondition = '';
@@ -128,8 +127,7 @@ const filtered_movies = async function (req, res) {
     connection.query(`
     SELECT id, title, poster_path, release_date, vote_average
     FROM Movies
-    WHERE title LIKE '${searchTitle}%'
-      AND vote_average BETWEEN ${minAvg} AND ${maxAvg}
+    WHERE vote_average BETWEEN ${minAvg} AND ${maxAvg}
       AND vote_count BETWEEN ${minCount} AND ${maxCount}
       AND adult <= ${isAdult}
       AND release_date BETWEEN DATE('${minDate}') AND DATE('${maxDate}')
@@ -269,7 +267,7 @@ const provider_recommendations = async function (req, res) {
     connection.query(`
     WITH Matching_Offers AS (
         SELECT *
-        FROM MovieStreaming
+        FROM MovieStreaming USE INDEX (MovieStreaming_Type)
         WHERE id IN ${moviesList}
             AND type IN ${streamingTypes}
         ), Provider_Count AS (
