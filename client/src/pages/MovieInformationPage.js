@@ -15,20 +15,18 @@ const MovieInformationPage = () => {
 
   // Fetch movie data on load
   useEffect(() => {
-    const route = id ? `/movie/${id}` : `/random`;
-    const fetchInfo = async () => {
-      fetch(`http://localhost:8080` + route)
-        .then((resp) => resp.json())
-        .then((respJson) => {
-          setMovieData(respJson);
-          setRating(respJson?.vote_average / 2);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-      setIsLoading(false);
-    };
-    fetchInfo();
+    const route = id ? `/movie/${id}` : '/random';
+    fetch(`http://localhost:8080` + route)
+      .then(resp => resp.json())
+      .then(respJson => {
+        setMovieData(respJson);
+        setRating(respJson?.vote_average / 2);
+      })
+      .then(() => setIsLoading(false))
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
   }, [id]);
 
   const infoList = [
