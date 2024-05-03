@@ -267,32 +267,30 @@ const provider_recommendations = async function (req, res) {
     connection.query(`
     WITH Matching_Offers AS (
         SELECT *
-        FROM MovieStreaming USE INDEX (MovieStreaming_Type)
+        FROM MovieStreaming USE INDEX (PRIMARY)
         WHERE id IN ${moviesList}
             AND type IN ${streamingTypes}
         ), Provider_Count AS (
-            SELECT platform_id, COUNT(DISTINCT id) AS num_movies
+            SELECT platform_id, ROUND(100 * COUNT(DISTINCT id) / ${numMovies}, 2) AS pct_movies
             FROM Matching_Offers
             GROUP BY platform_id
+            ORDER BY pct_movies DESC
+            LIMIT 10
         ), Providers_Info AS (
-            SELECT platform_id, provider, provider_logo, 
-                ROUND(100 * num_movies / ${numMovies}, 2) AS pct_movies, 
-                display_priority
+            SELECT platform_id, provider, provider_logo, pct_movies, display_priority
             FROM Providers
                 NATURAL JOIN Provider_Count
-            ORDER BY pct_movies DESC, display_priority ASC
-            LIMIT 10
         ), Provider_Movie_List AS (
             SELECT platform_id, GROUP_CONCAT(CONCAT_WS(',', type, id, title, poster_path) SEPARATOR ';') AS movie_list
             FROM Matching_Offers
                 NATURAL JOIN Movies
             GROUP BY platform_id
         )
-        SELECT pi.platform_id, pi.provider, pi.provider_logo, pi.pct_movies, 
-            pm.movie_list
-        FROM Providers_Info pi
-        JOIN Provider_Movie_List pm ON pi.platform_id = pm.platform_id
-        ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
+    SELECT pi.platform_id, pi.provider, pi.provider_logo, pi.pct_movies,
+        pm.movie_list
+    FROM Providers_Info pi
+    JOIN Provider_Movie_List pm ON pi.platform_id = pm.platform_id
+    ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
     `, (err, data) => {
         if (err || data == undefined) {
            // console.log(err);
