@@ -7,7 +7,6 @@ import match from 'autosuggest-highlight/match';
 
 
 const QuickSearch = ({ sendValue, ...extra }) => {
-    const [searchValue, setSearchValue] = useState(null);
     const [searchInputValue, setSearchInputValue] = useState('');
     const [searchOptions, setSearchOptions] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -39,12 +38,10 @@ const QuickSearch = ({ sendValue, ...extra }) => {
             loading={loading}
             options={searchOptions}
             getOptionLabel={(option) => option.title}
-            value={searchValue}
             isOptionEqualToValue={(option, value) => !!option.id}
             onChange={(event, newValue) => {
                 if (newValue) {
                     sendValue(newValue);
-                    // setSearchValue(newValue);
                     setSearchInputValue('');
                     setSearchOptions([]);
                 }
