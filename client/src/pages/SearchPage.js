@@ -63,15 +63,15 @@ const SearchPage = () => {
       adult: event.target.checked ? 1 : 0
     }));
   };
-  
+
 
   // Function to handle form submission
   const handleSubmit = async (event) => {
     setIsLoading(true);
     event.preventDefault();
     fetch(`http://localhost:8080/filtered_movies?`
-      // + `genres_list=${searchCriteria.genres.toString()}&`
-      // + `providers_list=${searchCriteria.providers.toString()}&`
+      + (searchCriteria.genres.length > 0 ? `genres_list=${searchCriteria.genres.toString()}&` : '')
+      + (searchCriteria.providers.length > 0 ? `providers_list=${searchCriteria.providers.toString()}&` : '')
       + `min_count=${searchCriteria.voteCountRange[0]}&`
       + `max_count=${searchCriteria.voteCountRange[1]}&`
       + `min_avg=${searchCriteria.voteAvgRange[0]}&`
@@ -81,23 +81,18 @@ const SearchPage = () => {
       + `is_adult=${searchCriteria.adult}`
     )
       .then(resp => resp.json())
-      .then(respJson => { 
-        setSearchResults(respJson);
-        setIsLoading(false);
-      })
-      .catch(error => { 
-        console.error(error);
-        setIsLoading(false);
-      });
+      .then(respJson => setSearchResults(respJson))
+      .catch(error => console.error(error))
+      .finally(() => setIsLoading(false));
   };
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <Grid container spacing={2} sx={{ m: 'auto', maxWidth: 1200, p: 5 }}>
         {/* Title */}
-      <Typography variant="h4" gutterBottom>
-        Movie Search
-      </Typography>
+        <Typography variant="h4" gutterBottom>
+          Movie Search
+        </Typography>
         <Grid container spacing={6} justifyContent="center" alignItems="center">
           {/* Genres */}
           <Grid item xs={12} md={6}>
@@ -175,13 +170,14 @@ const SearchPage = () => {
           </Grid>
         </Grid>
         {/* Display search results in Grid Component */}
-        {searchResults.length > 0 && (
+
+        {(isLoading || searchResults.length > 0) && (
           <Box mt={4}>
             <Typography variant="h4" gutterBottom>
-              Top Movies
+              Top Results
             </Typography>
             {isLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw' }}>
                 <CircularProgress />
               </div>
             ) : (
