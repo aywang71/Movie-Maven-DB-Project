@@ -10,6 +10,8 @@ export const getYear = (dateString) => {
   return date.toLocaleDateString('en-US', options);
 }
 
+export const capitalizeWords = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
+
 export const formatMoney = (budget) => {
   const abs = Math.abs(Number(budget));
   return '$' + (

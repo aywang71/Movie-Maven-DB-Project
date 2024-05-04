@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Grid, Box, Typography, Card, List, ListItemIcon, IconButton, ListItem, Divider, Button, CircularProgress } from "@mui/material";
-import { Close } from "@mui/icons-material"
+import { Tooltip, Grid, Box, Typography, Card, List, ListItemIcon, IconButton, ListItem, Divider, Button, CircularProgress } from "@mui/material";
+import { Close, Insights } from "@mui/icons-material"
 import QuickSearch from "../components/QuickSearch";
 import GridComponent from "../components/GridComponent";
 import { getYear } from "../utils";
+import MovieAnalyticsComponent from "../components/MovieAnalyticsComponent";
 
 const status = {
     HIDDEN: -1,
@@ -17,6 +18,7 @@ const MovieRecommendationPage = () => {
     const [movieRecs, setMovieRecs] = useState([]);
     const [providerStatus, setProviderStatus] = useState(status.HIDDEN);
     const [providerRecs, setProviderRecs] = useState([]);
+    const [insightsOpen, setInsightsOpen] = useState(false);
 
     useEffect(() => {
         // Load stored value from localStorage on component mount
@@ -57,8 +59,20 @@ const MovieRecommendationPage = () => {
                 <Grid item xs={4}>
                     {/* <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: '5px' }}> */}
                     {/* Main info card */}
-                    <Card variant='outlined' width="100%" sx={{ p: 2 }}>
-                        <Typography variant='h4' mb={2}>Your Watch List</Typography>
+                    <Card variant='outlined' width="100%" sx={{ p: 3 }}>
+                        <Box mb={1} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant='h4'>Your Watch List</Typography>
+                            <Tooltip title='Get insights on your favorites' placement="top" arrow>
+                                <span>
+                                    <IconButton disabled={movieList.length === 0} onClick={() => setInsightsOpen(true)}>
+                                        <Insights />
+
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                            {movieList.length > 0 && <MovieAnalyticsComponent setOpen={setInsightsOpen} open={insightsOpen} uri={`http://localhost:8080/userList/?movies=${movieList.map(m => m.id).join(',')}`} />}
+                        </Box>
+
                         <QuickSearch label='Add a movie' sendValue={(val) => {
                             console.log(val);
                             if (movieList.every(m => m.id !== val.id)) {
