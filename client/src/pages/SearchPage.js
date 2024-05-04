@@ -70,8 +70,8 @@ const SearchPage = () => {
     setIsLoading(true);
     event.preventDefault();
     fetch(`http://localhost:8080/filtered_movies?`
-      + `genres_list=${searchCriteria.genres.toString()}&`
-      + `providers_list=${searchCriteria.providers.toString()}&`
+      // + `genres_list=${searchCriteria.genres.toString()}&`
+      // + `providers_list=${searchCriteria.providers.toString()}&`
       + `min_count=${searchCriteria.voteCountRange[0]}&`
       + `max_count=${searchCriteria.voteCountRange[1]}&`
       + `min_avg=${searchCriteria.voteAvgRange[0]}&`
