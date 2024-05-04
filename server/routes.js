@@ -303,9 +303,10 @@ const provider_recommendations = async function (req, res) {
 
 // Route 6: /random
 const random = async function (req, res) {
+    let random = Math.floor(Math.random() * (687173));
+
     const rand = `SELECT id FROM ViewRandom
-    ORDER BY RAND()
-    LIMIT 1`;
+    LIMIT 1 OFFSET ${random}`; //ViewRandom has adult movies removed
     connection.query(rand, (err, data) => {
 
         const mid = data[0].id;
