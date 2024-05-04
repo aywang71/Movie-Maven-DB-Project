@@ -1,4 +1,4 @@
-import { Autocomplete, TextField, Grid, Box, Divider } from "@mui/material";
+import { Autocomplete, TextField, Grid, Box, Divider, CircularProgress } from "@mui/material";
 import { useState, useMemo } from "react";
 import { debounce } from '@mui/material/utils';
 import { getYear } from "../utils";
@@ -10,15 +10,18 @@ const QuickSearch = ({ sendValue, ...extra }) => {
     const [searchValue, setSearchValue] = useState(null);
     const [searchInputValue, setSearchInputValue] = useState('');
     const [searchOptions, setSearchOptions] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     // Debounced function to fetch options
     const fetchOptions = useMemo(() =>
         debounce((value) => {
+            setLoading(true);
             fetch(`http://localhost:8080/quickSearch/${value}`)
                 .then((resp) => resp.json())
                 .then((data) => {
                     setSearchOptions(data);
-                });
+                })
+                .finally(() => setLoading(false));
         }
             , 10)
         , []);
@@ -29,6 +32,7 @@ const QuickSearch = ({ sendValue, ...extra }) => {
             {...extra}
             clearOnEscape
             clearOnBlur
+            loading={loading}
             options={searchOptions}
             getOptionLabel={(option) => option.title}
             value={searchValue}
@@ -51,7 +55,15 @@ const QuickSearch = ({ sendValue, ...extra }) => {
                 }
             }}
             renderInput={(params) => (
-                <TextField {...params} label="Add a movie" fullWidth />
+                <TextField {...params} label="Add a movie" fullWidth InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                        <>
+                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                            {params.InputProps.endAdornment}
+                        </>
+                    ),
+                }} />
             )}
             renderOption={(props, option, { inputValue }) => {
                 const matches = match(option.title, inputValue, { insideWords: true });

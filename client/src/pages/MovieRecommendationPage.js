@@ -56,9 +56,9 @@ const MovieRecommendationPage = () => {
             <Grid container spacing={4} sx={{ m: 'auto', maxWidth: '90%', border: '1px solid #f5f5f5', p: 5 }}>
                 {/* Movie into */}
                 <Grid item xs={4}>
-                    <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: '5px' }}>
+                    {/* <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: '5px' }}> */}
                         {/* Main info card */}
-                        {/* <Card variant='outlined' width="100%" sx={{ p: 2 }}> */}
+                        <Card variant='outlined' width="100%" sx={{ p: 2 }}>
                         <Typography variant='h4' mb={2}>Your Watch List</Typography>
                         <QuickSearch sendValue={(val) => {
                             console.log(val);
@@ -117,8 +117,8 @@ const MovieRecommendationPage = () => {
                                 Go
                             </Button>
                         </Box>
-
-                    </Box>
+</Card>
+                    {/* </Box> */}
                 </Grid>
 
                 {/* Movie Poster */}
