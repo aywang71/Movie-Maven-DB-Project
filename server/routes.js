@@ -303,9 +303,10 @@ const provider_recommendations = async function (req, res) {
 
 // Route 6: /random
 const random = async function (req, res) {
+    let random = Math.floor(Math.random() * (687173));
+
     const rand = `SELECT id FROM ViewRandom
-    ORDER BY RAND()
-    LIMIT 1`;
+    LIMIT 1 OFFSET ${random}`; //ViewRandom has adult movies removed
     connection.query(rand, (err, data) => {
 
         const mid = data[0].id;
@@ -403,7 +404,7 @@ const groupSingle = async function (req, res) { //maybe make a view due to runti
     const filter = req.params.filter_group;
     let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `;
     if (group === "Genres") {
-        query += `from Genres join Movies on Genres.id = Movies.id where genre = '${filter}' AND vote_count > 0`;
+        query += `from Genres USE INDEX (MovieIDGenre) join Movies on Genres.id = Movies.id where genre = '${filter}' AND vote_count > 0`;
     } else if (group === "ProductionCompanies") {
         query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter}' AND vote_count > 0`;
     } else if (group === "SpokenLanguages") {

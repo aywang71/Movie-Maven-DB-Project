@@ -40,61 +40,141 @@
             "id": 245891,
             "title": "John Wick",
             "release_date": "2014-10-22T04:00:00.000Z",
-            "poster_path": "/fZPSd91yGE9fCcCe6OoQr6E3Bev.jpg"
+            "poster_path": "/fZPSd91yGE9fCcCe6OoQr6E3Bev.jpg",
+            "overview": "Ex-hitman John Wick comes out of retirement to track down the gangsters that took everything from him."
         },
         {
             "id": 324552,
             "title": "John Wick: Chapter 2",
             "release_date": "2017-02-08T05:00:00.000Z",
-            "poster_path": "/hXWBc0ioZP3cN4zCu6SN3YHXZVO.jpg"
+            "poster_path": "/hXWBc0ioZP3cN4zCu6SN3YHXZVO.jpg",
+            "overview": "John Wick is forced out of retirement by a former associate looking to seize control of a shadowy international assassins’ guild. Bound by a blood oath to aid him, Wick travels to Rome and does battle against some of the world’s most dangerous killers."
         },
         {
             "id": 458156,
             "title": "John Wick: Chapter 3 - Parabellum",
             "release_date": "2019-05-15T04:00:00.000Z",
-            "poster_path": "/ziEuG1essDuWuC5lpWUaw1uXY2O.jpg"
+            "poster_path": "/ziEuG1essDuWuC5lpWUaw1uXY2O.jpg",
+            "overview": "Super-assassin John Wick returns with a $14 million price tag on his head and an army of bounty-hunting killers on his trail. After killing a member of the shadowy international assassin’s guild, the High Table, John Wick is excommunicado, but the world’s most ruthless hit men and women await his every turn."
         },
         {
             "id": 49529,
             "title": "John Carter",
             "release_date": "2012-03-07T05:00:00.000Z",
-            "poster_path": "/lCxz1Yus07QCQQCb6I0Dr3Lmqpx.jpg"
+            "poster_path": "/lCxz1Yus07QCQQCb6I0Dr3Lmqpx.jpg",
+            "overview": "John Carter is a war-weary, former military captain who's inexplicably transported to the mysterious and exotic planet of Barsoom (Mars) and reluctantly becomes embroiled in an epic conflict. It's a world on the brink of collapse, and Carter rediscovers his humanity when he realizes the survival of Barsoom and its people rests in his hands."
         },
         {
             "id": 603692,
             "title": "John Wick: Chapter 4",
             "release_date": "2023-03-22T04:00:00.000Z",
-            "poster_path": "/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg"
+            "poster_path": "/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
+            "overview": "With the price on his head ever increasing, John Wick uncovers a path to defeating The High Table. But before he can earn his freedom, Wick must face off against a new enemy with powerful alliances across the globe and forces that turn old friends into foes."
         },
         {
             "id": 492,
             "title": "Being John Malkovich",
             "release_date": "1999-10-29T04:00:00.000Z",
-            "poster_path": "/xVSvIwRNzwXSs0CLefiiG6A96m4.jpg"
+            "poster_path": "/xVSvIwRNzwXSs0CLefiiG6A96m4.jpg",
+            "overview": "One day at work, unsuccessful puppeteer Craig finds a portal into the head of actor John Malkovich. The portal soon becomes a passion for anybody who enters its mad and controlling world of overtaking another human body."
         },
         {
             "id": 22971,
             "title": "Dear John",
             "release_date": "2010-02-04T05:00:00.000Z",
-            "poster_path": "/2lAPv2jQ5eh54l4EttA9wjDljED.jpg"
+            "poster_path": "/2lAPv2jQ5eh54l4EttA9wjDljED.jpg",
+            "overview": "While Sergeant John Tyree is home on two weeks leave from Germany, he meets Savannah after he dives into the ocean to retrieve Savannah's purse that had fallen off a pier. John eventually falls in love with Savannah, who promises to write to him until he returns from overseas."
         },
         {
             "id": 9486,
             "title": "Johnny English",
             "release_date": "2003-03-14T05:00:00.000Z",
-            "poster_path": "/lx3Y7teA6DaoQ6cIhwzrlnDZpFW.jpg"
+            "poster_path": "/lx3Y7teA6DaoQ6cIhwzrlnDZpFW.jpg",
+            "overview": "A lowly pencil pusher working for MI7, Johnny English is suddenly promoted to super spy after Agent One is assassinated and every other agent is blown up at his funeral. When a billionaire entrepreneur sponsors the exhibition of the Crown Jewels—and the valuable gems disappear on the opening night and on English's watch—the newly-designated agent must jump into action to find the thief and recover the missing gems."
         },
         {
             "id": 58233,
             "title": "Johnny English Reborn",
             "release_date": "2011-09-15T04:00:00.000Z",
-            "poster_path": "/1T6qnlTVkrGr0mpgZbpSwVU5FWW.jpg"
+            "poster_path": "/1T6qnlTVkrGr0mpgZbpSwVU5FWW.jpg",
+            "overview": "The most prominent heads of state in the world begin gathering for a conference that could have a major impact on global politics. When MI-7 receives word that the Chinese premier has become the target of some high-powered killers, it falls on Johnny English to save the day. Armed with the latest high-tech weaponry and gadgets that would make even James Bond jealous, the once-disgraced agent uncovers evidence of a massive conspiracy involving some of the world's most powerful organisations, and vows to redeem his tarnished reputation by stopping the killers before they can strike."
         },
         {
             "id": 463272,
             "title": "Johnny English Strikes Again",
             "release_date": "2018-09-13T04:00:00.000Z",
-            "poster_path": "/tCBxnZwLiY1BOKw3tH6AxHZdqPh.jpg"
+            "poster_path": "/tCBxnZwLiY1BOKw3tH6AxHZdqPh.jpg",
+            "overview": "Disaster strikes when a criminal mastermind reveals the identities of all active undercover agents in Britain. The secret service can now rely on only one man - Johnny English. Currently teaching at a minor prep school, Johnny springs back into action to find the mysterious hacker. For this mission to succeed, he’ll need all of his skills - what few he has - as the man with yesterday’s analogue methods faces off against tomorrow’s digital technology."
+        },
+        {
+            "id": 8470,
+            "title": "John Q",
+            "release_date": "2002-02-15T05:00:00.000Z",
+            "poster_path": "/xEE91LvXiqgs7Hmdl44LCzHtFf6.jpg",
+            "overview": "John Quincy Archibald is a father and husband whose son is diagnosed with an enlarged heart and then finds out he cannot receive a transplant because HMO insurance will not cover it. Therefore, he decides to take a hospital full of patients hostage until the hospital puts his son's name on the donor's list."
+        },
+        {
+            "id": 9293,
+            "title": "John Tucker Must Die",
+            "release_date": "2006-07-27T04:00:00.000Z",
+            "poster_path": "/l8B01BFBpIyycO2DopROessWzQU.jpg",
+            "overview": "After discovering they are all dating the same same guy, three popular students from different cliques band together for revenge, so they enlist the help of a new gal in town and conspire to break the jerk's heart, while destroying his reputation."
+        },
+        {
+            "id": 9886,
+            "title": "Johnny Mnemonic",
+            "release_date": "1995-05-26T04:00:00.000Z",
+            "poster_path": "/iH8Jgi8qvb7pnBfI8fVGaUbyRna.jpg",
+            "overview": "In a dystopian 2021, Johnny is a data trafficker who has an implant that allows him to securely store data too sensitive for regular computer networks. On one delivery run, he accepts a package that not only exceeds the implant's safety limits—and will kill him if the data is not removed in time—but also contains information far more important and valuable than he had ever imagined. On a race against time, he must avoid the assassins sent to kill him and remove the data before it, too, ends his life."
+        },
+        {
+            "id": 38397,
+            "title": "The Legend of Al, John and Jack",
+            "release_date": "2002-12-13T05:00:00.000Z",
+            "poster_path": "/4xnYGJ8CoFFE5EEC23rL5L7kwfE.jpg",
+            "overview": "Al Caruso, John Gresco, and Jack Amoruso are three gangsters working for the Genovese family. After botching yet another hit and discovering that their boss wants to get rid of them, the trio comes up with a plan to sell him to the FBI. However, Al's short-term memory loss could be a problem..."
+        },
+        {
+            "id": 12776,
+            "title": "Johnny Stecchino",
+            "release_date": "1991-10-24T04:00:00.000Z",
+            "poster_path": "/5scWsRsH5MUJEgXB52w0fM6I2gM.jpg",
+            "overview": "Good hearted but not very wordly-wise, Dante is happy driving the school bus for a group of mentally handicapped children, while feeling he is somehow missing out on life and love. So he is very excited when after nearly being knocked down by her car he meets Maria, who seems immediately enamoured of him. He is soon invited to her sumptuous Palermo villa, little suspecting that this is part of a plot. He bears an amazing likeness to Maria's stool-pigeon gangster husband and it would be convenient for them if the mobster, in the shape of Dante, was seen to be dead and buried."
+        },
+        {
+            "id": 291984,
+            "title": "The Death & Life of John F. Donovan",
+            "release_date": "2019-03-13T04:00:00.000Z",
+            "poster_path": "/2bhI7Ivk7VmvUaJaDTxJUgOXp1E.jpg",
+            "overview": "A decade after the death of an American TV star, a young actor reminisces about the written correspondence he once shared with the former, as well as the impact those letters had on both their lives."
+        },
+        {
+            "id": 75761,
+            "title": "John Dies at the End",
+            "release_date": "2013-01-25T05:00:00.000Z",
+            "poster_path": "/1IsviP0Tb05xUAFWz5b7FJ0qIHP.jpg",
+            "overview": "A new drug promises out-of-body experiences, but users are coming back changed forever, and an otherworldly invasion of Earth is underway."
+        },
+        {
+            "id": 11943,
+            "title": "Jeremiah Johnson",
+            "release_date": "1972-09-10T04:00:00.000Z",
+            "poster_path": "/732cOohUbdH3FCo7lPbYVtbgUot.jpg",
+            "overview": "A mountain man who wishes to live the life of a hermit becomes the unwilling object of a long vendetta by Indians when he proves to be the match of their warriors in one-to-one combat on the early frontier."
+        },
+        {
+            "id": 3784,
+            "title": "Frankie and Johnny",
+            "release_date": "1991-10-11T04:00:00.000Z",
+            "poster_path": "/zSOh7hriX4mQNVxhCz1yVY4aykn.jpg",
+            "overview": "When Johnny is released from prison following a forgery charge, he quickly lands a job as a short-order cook at a New York diner. Following a brief fling with waitress Cora, Frankie develops an attraction for Cora's friend and fellow waitress Frankie. While Frankie resists Johnny's charms initially, she eventually relents when her best friend, Tim, persuades her to give Johnny a chance."
+        },
+        {
+            "id": 26596,
+            "title": "Johnny Guitar",
+            "release_date": "1954-05-26T04:00:00.000Z",
+            "poster_path": "/bap37yOCwcR9x4YDsNUaSo9nIp9.jpg",
+            "overview": "On the outskirts of town, the hard-nosed Vienna owns a saloon frequented by the undesirables of the region, including Dancin' Kid and his gang. Another patron of Vienna's establishment is Johnny Guitar, a former gunslinger and her lover. When a heist is pulled in town that results in a man's death, Emma Small, Vienna's rival, rallies the townsfolk to take revenge on Vienna's saloon – even without proof of her wrongdoing."
         }
     ],
     "platformDataNetflix":[
