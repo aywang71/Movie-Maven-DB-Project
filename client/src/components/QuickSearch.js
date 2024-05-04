@@ -11,6 +11,7 @@ const QuickSearch = ({ sendValue, ...extra }) => {
     const [searchInputValue, setSearchInputValue] = useState('');
     const [searchOptions, setSearchOptions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     // Debounced function to fetch options
     const fetchOptions = useMemo(() =>
@@ -31,6 +32,9 @@ const QuickSearch = ({ sendValue, ...extra }) => {
         <Autocomplete
             {...extra}
             clearOnEscape
+            open={isOpen}
+            onOpen={() => setIsOpen(true)}
+            onClose={() => setIsOpen(false)}
             clearOnBlur
             loading={loading}
             options={searchOptions}
@@ -59,7 +63,7 @@ const QuickSearch = ({ sendValue, ...extra }) => {
                     ...params.InputProps,
                     endAdornment: (
                         <>
-                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                            {loading && isOpen ? <CircularProgress color="inherit" size={20} /> : null}
                             {params.InputProps.endAdornment}
                         </>
                     ),
