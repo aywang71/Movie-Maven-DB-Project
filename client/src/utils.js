@@ -849,3 +849,5 @@ export const providers = [
     "platform_id": 255
   }
 ];
+
+export const languages = ["English", "French"];
