@@ -56,10 +56,10 @@ const MovieRecommendationPage = () => {
                 {/* Movie into */}
                 <Grid item xs={4}>
                     {/* <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: '5px' }}> */}
-                        {/* Main info card */}
-                        <Card variant='outlined' width="100%" sx={{ p: 2 }}>
+                    {/* Main info card */}
+                    <Card variant='outlined' width="100%" sx={{ p: 2 }}>
                         <Typography variant='h4' mb={2}>Your Watch List</Typography>
-                        <QuickSearch sendValue={(val) => {
+                        <QuickSearch label='Add a movie' sendValue={(val) => {
                             console.log(val);
                             if (movieList.every(m => m.id !== val.id)) {
                                 setMovieList(old => {
@@ -116,7 +116,7 @@ const MovieRecommendationPage = () => {
                                 Go
                             </Button>
                         </Box>
-</Card>
+                    </Card>
                     {/* </Box> */}
                 </Grid>
 

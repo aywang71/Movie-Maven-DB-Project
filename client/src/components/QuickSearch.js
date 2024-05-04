@@ -1,4 +1,5 @@
 import { Autocomplete, TextField, Grid, Box, Divider, CircularProgress } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useState, useMemo } from "react";
 import { debounce } from '@mui/material/utils';
 import { getYear } from "../utils";
@@ -6,7 +7,7 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
 
-const QuickSearch = ({ sendValue, ...extra }) => {
+const QuickSearch = ({ sendValue, hideLoading, label, background, variant, ...extra }) => {
     const [searchInputValue, setSearchInputValue] = useState('');
     const [searchOptions, setSearchOptions] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -30,11 +31,11 @@ const QuickSearch = ({ sendValue, ...extra }) => {
     return (
         <Autocomplete
             {...extra}
-            clearOnEscape
             open={isOpen}
             onOpen={() => setIsOpen(true)}
             onClose={() => setIsOpen(false)}
             clearOnBlur
+            clearOnEscape
             loading={loading}
             options={searchOptions}
             getOptionLabel={(option) => option.title}
@@ -47,8 +48,10 @@ const QuickSearch = ({ sendValue, ...extra }) => {
                 }
             }}
             inputValue={searchInputValue}
-            onInputChange={(event, newInputValue) => {
-                setSearchInputValue(newInputValue);
+            onInputChange={(event, newInputValue, reason) => {
+                if (reason === 'input') {
+                    setSearchInputValue(newInputValue);
+                }
                 if (newInputValue) {
                     fetchOptions(newInputValue);
                 } else {
@@ -56,15 +59,38 @@ const QuickSearch = ({ sendValue, ...extra }) => {
                 }
             }}
             renderInput={(params) => (
-                <TextField {...params} label="Add a movie" fullWidth InputProps={{
+                <TextField {...params} label={label} fullWidth InputProps={{
                     ...params.InputProps,
                     endAdornment: (
                         <>
-                            {loading && isOpen ? <CircularProgress color="inherit" size={20} /> : null}
+                            {loading && !hideLoading && isOpen ? <CircularProgress color="inherit" size={20} /> : null}
                             {params.InputProps.endAdornment}
                         </>
                     ),
-                }} />
+                }}
+                    variant={variant}
+                    sx={{
+                        color: 'inherit', // Set text color to white
+                        '& .MuiInputLabel-root': {
+                            color: 'inherit', // Change color of the label
+
+                        },
+                        "& .MuiAutocomplete-inputRoot": {
+                            background: background,
+                            color: 'inherit'
+                        },
+                        '& .MuiInputBase-input': {
+                            color: 'inherit'
+                        }, "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "inherit"
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "inherit"
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "inherit"
+                        }
+                    }} />
             )}
             renderOption={(props, option, { inputValue }) => {
                 const matches = match(option.title, inputValue, { insideWords: true });
