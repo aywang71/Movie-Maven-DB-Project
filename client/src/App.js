@@ -12,7 +12,6 @@ import MovieAnalyticsPage from './pages/MovieAnalyticsPage';
 import MovieInformationPage from "./pages/MovieInformationPage";
 import MovieRecommendationPage from "./pages/MovieRecommendationPage";
 import PlatformInformationPage from "./pages/PlatformInformationPage";
-import PlatformRecommendationPage from './pages/PlatformRecommendationPage';
 import SearchPage from './pages/SearchPage';
 
 export const theme = createTheme({
@@ -34,6 +33,15 @@ export const theme = createTheme({
     ].join(','),
     h3: {
       fontSize: '2em',
+      fontWeight: 'bold'
+    },
+    h4: {
+      fontSize: '1.4em',
+      fontWeight: 'bold'
+    },
+    h6: {
+      fontSize: '1em',
+      lineHeight: '1.2em',
       fontWeight: 'bold'
     },
     body2: {
@@ -66,7 +74,6 @@ export default function App() {
           <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
           <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
           <Route path="/platformInformation/:platform" element={<PlatformInformationPage />} />
-          <Route path="/platformRecommendation" element={<PlatformRecommendationPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>
       </BrowserRouter>

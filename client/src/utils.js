@@ -4,6 +4,12 @@ export const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', options);
 };
 
+export const getYear = (dateString) => {
+  const date = new Date(dateString);
+  const options = { year: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+}
+
 export const formatMoney = (budget) => {
   const abs = Math.abs(Number(budget));
   return '$' + (
