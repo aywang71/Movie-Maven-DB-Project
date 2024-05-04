@@ -6,7 +6,7 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
 
-const QuickSearch = () => {
+const QuickSearch = ({ sendValue, ...extra }) => {
     const [searchValue, setSearchValue] = useState(null);
     const [searchInputValue, setSearchInputValue] = useState('');
     const [searchOptions, setSearchOptions] = useState([]);
@@ -26,14 +26,20 @@ const QuickSearch = () => {
 
     return (
         <Autocomplete
+            {...extra}
+            clearOnEscape
+            clearOnBlur
             options={searchOptions}
             getOptionLabel={(option) => option.title}
             value={searchValue}
             isOptionEqualToValue={(option, value) => !!option.id}
             onChange={(event, newValue) => {
-                setSearchValue(newValue);
-                setSearchInputValue('');
-                setSearchOptions([]);
+                if (newValue) {
+                    sendValue(newValue);
+                    // setSearchValue(newValue);
+                    setSearchInputValue('');
+                    setSearchOptions([]);
+                }
             }}
             inputValue={searchInputValue}
             onInputChange={(event, newInputValue) => {

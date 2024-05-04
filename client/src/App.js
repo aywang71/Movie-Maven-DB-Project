@@ -36,6 +36,15 @@ export const theme = createTheme({
       fontSize: '2em',
       fontWeight: 'bold'
     },
+    h4: {
+      fontSize: '1.4em',
+      fontWeight: 'bold'
+    },
+    h6: {
+      fontSize: '1em',
+      lineHeight: '1.2em',
+      fontWeight: 'bold'
+    },
     body2: {
       fontSize: '12',
       fontStyle: 'italic'
