@@ -12,7 +12,6 @@ import MovieAnalyticsPage from './pages/MovieAnalyticsPage';
 import MovieInformationPage from "./pages/MovieInformationPage";
 import MovieRecommendationPage from "./pages/MovieRecommendationPage";
 import PlatformInformationPage from "./pages/PlatformInformationPage";
-import PlatformRecommendationPage from './pages/PlatformRecommendationPage';
 import SearchPage from './pages/SearchPage';
 
 export const theme = createTheme({
@@ -75,7 +74,6 @@ export default function App() {
           <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
           <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
           <Route path="/platformInformation/:platform" element={<PlatformInformationPage />} />
-          <Route path="/platformRecommendation" element={<PlatformRecommendationPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>
       </BrowserRouter>
