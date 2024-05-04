@@ -51,7 +51,13 @@ const NavBar = () => {
           </Typography>
           {/* Random Button */}
           <Button
-            onClick={() => navigate("/movieInformation")}
+            onClick={() => {
+              if (window.location.href.endsWith("/randomMovie")) { 
+                navigate(0);
+              } else {
+                navigate("/randomMovie");
+              }
+            }}
             sx={{ my: 2, mx: 2, color: 'inherit', display: 'block' }}
           >
             Random Movie
