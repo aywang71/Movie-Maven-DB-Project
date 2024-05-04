@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Grid, Box, Typography, Card, Table, TableBody, TableRow, TableCell, CircularProgress } from "@mui/material";
 
-import { formatMoney } from "../utils";
+import { formatMoney, capitalizeWords } from "../utils";
 import GridComponent from '../components/GridComponent';
 
 const GenreInformationPage = () => {
@@ -58,7 +58,7 @@ const GenreInformationPage = () => {
         {/* Genre info */}
         <Grid item xs={7}>
           <Box elevation={3}>
-            <Typography variant="h4" sx={{ mb: 1 }}>{genre}</Typography>
+            <Typography variant="h4" sx={{ mb: 1 }}>{capitalizeWords(genre)}</Typography>
 
             {/* Main info card */}
             <Card variant="outlined" width="100%" sx={{ mt: 2, p: 2 }}>
