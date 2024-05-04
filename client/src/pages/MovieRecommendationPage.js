@@ -53,7 +53,7 @@ const MovieRecommendationPage = () => {
 
     return (
         <>
-            <Grid container spacing={4} sx={{ m: 'auto', maxWidth: '90%', border: '1px solid #f5f5f5', p: 5 }}>
+            <Grid container spacing={4} sx={{ m: 'auto', maxWidth: '90%', p: 5 }}>
                 {/* Movie into */}
                 <Grid item xs={4}>
                     {/* <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: '5px' }}> */}
