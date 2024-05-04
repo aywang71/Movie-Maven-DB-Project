@@ -71,7 +71,7 @@ const SearchPage = () => {
     event.preventDefault();
     fetch(`http://localhost:8080/filtered_movies?`
       + (searchCriteria.genres.length > 0 ? `genres_list=${searchCriteria.genres.toString()}&` : '')
-      + (searchCriteria.providers.length > 0 ? `providers_list=${searchCriteria.providers.toString()}&` : '')
+      + (searchCriteria.providers.length > 0 ? `providers_list=${searchCriteria.providers.map(provider => provider.platform_id).toString()}&` : '')
       + `min_count=${searchCriteria.voteCountRange[0]}&`
       + `max_count=${searchCriteria.voteCountRange[1]}&`
       + `min_avg=${searchCriteria.voteAvgRange[0]}&`
@@ -112,7 +112,7 @@ const SearchPage = () => {
               multiple
               id="providers"
               options={providers}
-              getOptionLabel={(option) => option}
+              getOptionLabel={(option) => option.provider}
               value={searchCriteria.providers}
               onChange={handleProviderChange}
               renderInput={(params) => <TextField {...params} label="Providers" />}

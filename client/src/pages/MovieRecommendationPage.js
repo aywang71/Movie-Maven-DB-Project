@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Grid, Box, Typography, Card, List, ListItemIcon, IconButton, ListItem, Divider, ListItemButton, Button, CircularProgress } from "@mui/material";
+import { Grid, Box, Typography, Card, List, ListItemIcon, IconButton, ListItem, Divider, Button, CircularProgress } from "@mui/material";
 import { Close } from "@mui/icons-material"
 import QuickSearch from "../components/QuickSearch";
 import GridComponent from "../components/GridComponent";
@@ -20,7 +20,6 @@ const MovieRecommendationPage = () => {
 
     useEffect(() => {
         // Load stored value from localStorage on component mount
-        // localStorage.removeItem('movieList')
         const storedValue = localStorage.getItem('movieList');
         if (storedValue) {
             setMovieList(JSON.parse(storedValue));
