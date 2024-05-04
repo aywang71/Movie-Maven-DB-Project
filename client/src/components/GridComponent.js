@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Grid, Box, IconButton } from '@mui/material';
+import { Grid, Box, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-const GridComponent = ({ items, type }) => {
+const GridComponent = ({ items, type, binge }) => {
   const imageKey = type === 'movie' ? 'poster_path' : 'provider_path';
   const linkTo = type === 'movie' ? '/movieInformation/' : '/platformInformation/';
 
@@ -31,16 +31,23 @@ const GridComponent = ({ items, type }) => {
   return (
     <>
       <Grid container spacing={3}>
-        {currentItems.map((item) => (
+        {currentItems.map((item, index) => (
           <Grid item key={item.id} xs={2}>
             <Box>
               <Link to={linkTo + item.id}>
                 <img
-                  src={`https://image.tmdb.org/t/p/w500${item[imageKey]}`}
+                  src={`https://image.tmdb.org/t/p/original${item[imageKey]}`}
                   alt={item.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </Link>
+              {/* Movie order and cumulative time */}
+              {binge && (
+                <Box mt={1}>
+                  <Typography variant="subtitle2">Movie Order: {startIndex + index + 1}</Typography>
+                  <Typography variant="subtitle2">Cumulative Time: {item.cumulative_time}</Typography>
+                </Box>
+              )}
             </Box>
           </Grid>
         ))}
