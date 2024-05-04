@@ -297,8 +297,8 @@ const provider_recommendations = async function (req, res) {
         ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
     `, (err, data) => {
         if (err || data == undefined) {
-           // console.log(err);
-            res.status(500).json({"error": "Error querying the database"});
+            // console.log(err);
+            res.status(500).json({ "error": "Error querying the database" });
         } else {
             res.status(200).json(data);
         }
@@ -534,7 +534,7 @@ const platformData = async function (req, res) {
 // Route 11 : /quickSearch/:title
 const quickSearch = async function (req, res) {
     const title = req.params.title;
-    const query = `select id, title, release_date, poster_path from ViewMoviesPopular where title like '%${title}%' limit 10;`
+    const query = `select id, title, release_date, poster_path from ViewMoviesPopular where title like '%${title}%' limit 20;`
     connection.query(query, (err, data) => {
         if (err) {
             //console.log(err);
