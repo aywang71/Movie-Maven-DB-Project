@@ -1,11 +1,20 @@
-import { useState } from "react";
-import { Grid, Box, Typography, Card, List, ListItemIcon, IconButton, ListItem, Divider } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Grid, Box, Typography, Card, List, ListItemIcon, IconButton, ListItem, Divider, ListItemButton, Button } from "@mui/material";
 import { Close } from "@mui/icons-material"
 import QuickSearch from "../components/QuickSearch";
 import { getYear } from "../utils";
 
 const MovieRecommendationPage = () => {
     const [movieList, setMovieList] = useState([]);
+
+    useEffect(() => {
+        // Load stored value from localStorage on component mount
+        const storedValue = localStorage.getItem('movieList');
+        console.log(storedValue)
+        if (storedValue) {
+            setMovieList(JSON.parse(storedValue));
+        }
+    }, []);
 
     return (
         <>
@@ -19,7 +28,11 @@ const MovieRecommendationPage = () => {
                             <QuickSearch sendValue={(val) => {
                                 console.log(val);
                                 if (movieList.every(m => m.id !== val.id)) {
-                                    setMovieList(old => [...old, val])
+                                    setMovieList(old => {
+                                        const newList = [...old, val];
+                                        localStorage.setItem('movieList', JSON.stringify(newList))
+                                        return newList;
+                                    });
                                 }
                             }} disabled={movieList.length >= 10} />
                             <List>
@@ -52,6 +65,15 @@ const MovieRecommendationPage = () => {
                                     </div>
                                 )}
                             </List>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button disabled={movieList.length === 0} onClick={() => {
+                                    setMovieList([]);
+                                    localStorage.removeItem('movieList');
+                                }}>
+                                    Clear
+                                </Button>
+                            </Box>
+
                         </Card>
                     </Box>
                 </Grid>
