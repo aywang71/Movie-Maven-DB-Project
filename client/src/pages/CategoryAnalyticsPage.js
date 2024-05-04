@@ -50,22 +50,22 @@ const CategoryAnalyticsPage = () => {
     if (searchCriteria.languages.length > 0) {
       tables.push('SpokenLanguages');
     }
-    return tables;
+    return tables.join();
   };
 
   // Function to get filters
   const getFilters = () => {
     const filters = [];
     if (searchCriteria.genres.length > 0) {
-      filters.push(`Genres.genre IN (${searchCriteria.genres.map(item => `'${item}'`).join(', ')})`);
+      filters.push(`(${searchCriteria.genres.map(item => `'${item}'`).join(', ')})`);
     }
     if (searchCriteria.providers.length > 0) {
-      filters.push(`Providers.provider IN (${searchCriteria.providers.map(item => `'${item}'`).join(', ')})`);
+      filters.push(`(${searchCriteria.providers.map(item => `'${item}'`).join(', ')})`);
     }
     if (searchCriteria.languages.length > 0) {
-      filters.push(`SpokenLanguages.language IN (${searchCriteria.languages.map(item => `'${item}'`).join(', ')})`);
+      filters.push(`(${searchCriteria.languages.map(item => `'${item}'`).join(', ')})`);
     }
-    return filters;
+    return filters.join();
   };
 
   // Function to handle form submission
