@@ -2,7 +2,6 @@ import { AppBar, Box, Button, Toolbar, Typography, Menu, MenuItem } from '@mui/m
 import MovieIcon from '@mui/icons-material/Movie';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import QuickSearch from './QuickSearch';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -120,15 +119,6 @@ const NavBar = () => {
               </MenuItem>
             ))}
           </Menu>
-          <QuickSearch
-            hideLoading
-            sx={{ flexGrow: 1 }}
-            label='Search'
-            size='small'
-            background='#3b3b3b'
-            variant='filled'
-            sendValue={v => navigate(`/movieInformation/${v.id}`)}
-          />
         </Toolbar>
       </AppBar>
     </Box>
