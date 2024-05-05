@@ -10,7 +10,7 @@ import CategoryAnalyticsPage from './pages/CategoryAnalyticsPage';
 import GenreInformationPage from './pages/GenreInformationPage';
 import MovieAnalyticsPage from './pages/MovieAnalyticsPage';
 import MovieInformationPage from "./pages/MovieInformationPage";
-import MovieRecommendationPage from "./pages/MovieRecommendationPage";
+import RecommendationPage from "./pages/RecommendationPage";
 import PlatformInformationPage from "./pages/PlatformInformationPage";
 import SearchPage from './pages/SearchPage';
 
@@ -72,7 +72,7 @@ export default function App() {
           <Route path="/movieAnalytics" element={<MovieAnalyticsPage />} />
           <Route path="/randomMovie" element={<MovieInformationPage />} />
           <Route path="/movieInformation/:id" element={<MovieInformationPage />} />
-          <Route path="/movieRecommendation" element={<MovieRecommendationPage />} />
+          <Route path="/recommendation" element={<RecommendationPage />} />
           <Route path="/platformInformation/:platform" element={<PlatformInformationPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>

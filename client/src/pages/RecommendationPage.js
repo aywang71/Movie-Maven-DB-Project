@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Box, Typography, Autocomplete, CircularProgress, Snackbar, Table, TableBody, TableRow, TableCell, Card } from '@mui/material';
+import { TextField, Button, Grid, Box, Typography, Autocomplete, CircularProgress, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
-const MovieAnalyticsPage = () => {
+import GridComponent from '../components/GridComponent';
+
+const RecommendationPage = () => {
   const [movies, setMovies] = useState([]);
   const [movieOptions, setMovieOptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [analyticsResults, setAnalyticsResults] = useState({data: {}});
+  const [movieRecommendations, setMovieRecommendations] = useState([]);
+  const [providerRecommendations, setProviderRecommendations] = useState([]);
+  const [movieIsLoading, setMovieIsLoading] = useState(false);
+  const [providerIsLoading, setProviderIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   // Function to fetch movie options
@@ -31,13 +35,20 @@ const MovieAnalyticsPage = () => {
       return;
     }
 
-    setIsLoading(true);
+    setMovieIsLoading(true);
     const moviesInput = movies.map(movie => movie.id).join(',');
-    fetch(`http://localhost:8080/userList/?movies=${moviesInput}`)
+    fetch(`http://localhost:8080/movie_recommendations/?movies=${moviesInput}`)
       .then(resp => resp.json())
-      .then(respJson => setAnalyticsResults({data: respJson[0]}))
+      .then(respJson => setMovieRecommendations(respJson))
       .catch(error => console.error(error))
-      .finally(() => setIsLoading(false));
+      .finally(() => setMovieIsLoading(false));
+
+    setProviderIsLoading(true);
+    fetch(`http://localhost:8080/provider_recommendations/?movies=${moviesInput}`)
+      .then(resp => resp.json())
+      .then(respJson => setProviderRecommendations(respJson.map(p => ({ id: p.provider, title: p.provider, provider_path: p.provider_logo }))))
+      .catch(error => console.error(error))
+      .finally(() => setProviderIsLoading(false));
   };
 
   // Function to handle Snackbar close
@@ -45,22 +56,12 @@ const MovieAnalyticsPage = () => {
     setErrorMessage('');
   };
 
-  const infoList = [
-    { prop: 'Number of Movies', value: analyticsResults?.data?.num_movies },
-    { prop: 'Vote Average', value: analyticsResults?.data?.vote_average },
-    { prop: 'Average Vote Count', value: analyticsResults?.data?.vote_count },
-    { prop: 'Average Revenue', value: analyticsResults?.data?.avg_revenue },
-    { prop: 'Average Budget', value: analyticsResults?.data?.avg_budget },
-    { prop: 'Average Runtime', value: analyticsResults?.data?.avg_runtime },
-    { prop: 'Average Popularity', value: analyticsResults?.data?.avg_popularity }
-  ];
-
   return (
     <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <Grid container spacing={2} sx={{ m: 'auto', maxWidth: 1200, p: 5 }}>
         {/* Title */}
         <Typography variant="h4" gutterBottom>
-          Movie Analytics
+          Recommendations
         </Typography>
         <Grid container spacing={6} justifyContent="center" alignItems="center">
           {/* Movies */}
@@ -82,37 +83,20 @@ const MovieAnalyticsPage = () => {
           </Grid>
         </Grid>
         {/* Display search results in Grid Component */}
-        {(isLoading || Object.keys(analyticsResults.data).length > 0) && (
+        {(movieIsLoading || providerIsLoading || movieRecommendations.length > 0 || providerRecommendations.length > 0) && (
           <Box mt={4} justifyContent="center">
-            {isLoading ? (
-                <CircularProgress />
+            {movieIsLoading || providerIsLoading ? (
+              <CircularProgress />
             ) : (
               <>
               <Typography variant="h4" gutterBottom>
-                Analytics
+                Top Movies
               </Typography>
-              <Card variant="outlined" width="100%" sx={{ mt: 2, p: 2 }}>
-                <Table size='small'>
-                  <TableBody>
-                    {infoList.map(({ prop, value }) =>
-                      !!value && (
-                        <TableRow key={prop} >
-                          <TableCell sx={{ borderBottom: 'none' }}>
-                            <Typography variant='body1' fontWeight='bold' fontStyle='normal' lineHeight={1} mb={1}>
-                              {prop}
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ borderBottom: 'none' }} align='right'>
-                            <Typography variant='body1' fontStyle='normal' lineHeight={1}>
-                              {value}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </Table>
-              </Card>
+              <GridComponent items={movieRecommendations} type="movie" />
+              <Typography variant="h4" gutterBottom>
+                Top Providers
+              </Typography>
+              <GridComponent items={providerRecommendations} type="provider" />
               </>
             )}
           </Box>
@@ -128,4 +112,4 @@ const MovieAnalyticsPage = () => {
   );
 };
 
-export default MovieAnalyticsPage;
+export default RecommendationPage;

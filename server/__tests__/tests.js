@@ -294,7 +294,6 @@ test('GET /topMovies', async () => {
     .expect(200)
     .then((res) => {
       res.body.forEach((val) => expect(val).toStrictEqual({
-        genre: expect.any(String),
         id: expect.any(Number),
         title: expect.any(String),
         poster_path: expect.any(String),
