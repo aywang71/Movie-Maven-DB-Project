@@ -410,13 +410,15 @@ const groupSingle = async function (req, res) { //maybe make a view due to runti
     console.log("Running /groupSingle");
     const group = req.params.table_name;
     const filter = req.params.filter_group;
-    let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `;
+    let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `; //to optimize, just use this code but on a grouped result instead
     if (group === "Genres") {
-        query += `from Genres USE INDEX (MovieIDGenre) join Movies on Genres.id = Movies.id where genre = '${filter}' AND vote_count > 0`;
+        query = `SELECT * from ViewGenresStats where genre = '${filter}'`;
     } else if (group === "ProductionCompanies") {
-        query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter}' AND vote_count > 0`;
+        query = `SELECT * from ViewCompaniesStats where company = '${filter}'`;
+        //query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter}' AND vote_count > 0`;
     } else if (group === "SpokenLanguages") {
-        query += `from SpokenLanguages join Movies on SpokenLanguages.id = Movies.id where language = '${filter}' AND vote_count > 0`;
+        query = `SELECT * from ViewLanguageStats where language = '${filter}'`;
+        //query += `from SpokenLanguages join Movies on SpokenLanguages.id = Movies.id where language = '${filter}' AND vote_count > 0`;
     } else {
         res.status(500).json({ error: "table_name parameter does not exist" });
         return;
@@ -424,11 +426,12 @@ const groupSingle = async function (req, res) { //maybe make a view due to runti
     //console.log(query);
 
     connection.query(query, (err, data) => {
+        //console.log(data);
         //console.log(data[0].num_movies);
         if (err) {
             //console.log(err);
             res.status(500).json({ error: "Error querying the database" });
-        } else if (data[0].num_movies === 0) {
+        } else if (data.length === 0 || data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
         } else {
             res.status(200).json(data);

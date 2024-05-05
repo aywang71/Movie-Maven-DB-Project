@@ -164,7 +164,7 @@ test('GET /platformError', async () => {
     })
 }, 15000);
 
-test('GET /groupSingleError', async () => {
+test('GET /groupSingleError2', async () => {
   await supertest(app).get('/groupSingle/Genres/poop')
     .expect(500)
     .then((res) => {
