@@ -60,7 +60,7 @@ const CategoryAnalyticsPage = () => {
       filters.push(`(${searchCriteria.genres.map(item => `'${item}'`).join(', ')})`);
     }
     if (searchCriteria.providers.length > 0) {
-      filters.push(`(${searchCriteria.providers.map(item => `'${item}'`).join(', ')})`);
+      filters.push(`(${searchCriteria.providers.map(item => `'${item.provider}'`).join(', ')})`);
     }
     if (searchCriteria.languages.length > 0) {
       filters.push(`(${searchCriteria.languages.map(item => `'${item}'`).join(', ')})`);
