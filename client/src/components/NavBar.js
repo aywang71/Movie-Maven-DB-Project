@@ -28,7 +28,7 @@ const NavBar = () => {
 
   const recommendationItems = [
     { label: "Binge Watch", route: "/bingeWatch" },
-    { label: "Movie Recommendation", route: "/movieRecommendation" },
+    { label: "Get Recommendations", route: "/recommendation" },
   ];
 
   const analyticsItems = [
