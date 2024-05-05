@@ -594,7 +594,7 @@ const topProviders = async function (req, res) {
 // Route 14: /topMovies
 const topMovies = async function (req, res) {
     console.log("Running /topMovies");
-    const query = `select *
+    const query = `select distinct id, title, poster_path, release_date, vote_average
     from ViewGenreMovies
     order by RAND()
     limit 24;`;
