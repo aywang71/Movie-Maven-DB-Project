@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Box, Typography, Autocomplete, CircularProgress, Snackbar } from '@mui/material';
+import { TextField, Button, Grid, Box, Typography, Autocomplete, CircularProgress, Snackbar, Table, TableBody, TableRow, TableCell, Card } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
 import { genres, providers, languages } from "../utils";
@@ -10,7 +10,7 @@ const CategoryAnalyticsPage = () => {
     providers: [],
     languages: [],
   });
-  const [analyticsResults, setAnalyticsResults] = useState();
+  const [analyticsResults, setAnalyticsResults] = useState({data: {}});
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -88,7 +88,7 @@ const CategoryAnalyticsPage = () => {
       + `filters=${filters}`
     )
       .then(resp => resp.json())
-      .then(respJson => setAnalyticsResults(respJson[0]))
+      .then(respJson => setAnalyticsResults({data: respJson[0]}))
       .catch(error => console.error(error))
       .finally(() => setIsLoading(false));
   };
@@ -97,6 +97,16 @@ const CategoryAnalyticsPage = () => {
   const handleCloseSnackbar = () => {
     setErrorMessage('');
   };
+
+  const infoList = [
+    { prop: 'Number of Movies', value: analyticsResults?.data?.num_movies },
+    { prop: 'Vote Average', value: analyticsResults?.data?.vote_average },
+    { prop: 'Average Vote Count', value: analyticsResults?.data?.vote_count },
+    { prop: 'Average Revenue', value: analyticsResults?.data?.avg_revenue },
+    { prop: 'Average Budget', value: analyticsResults?.data?.avg_budget },
+    { prop: 'Average Runtime', value: analyticsResults?.data?.avg_runtime },
+    { prop: 'Average Popularity', value: analyticsResults?.data?.avg_popularity }
+  ];
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
@@ -131,7 +141,7 @@ const CategoryAnalyticsPage = () => {
             />
           </Grid>
           {/* Languages */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
             <Autocomplete
               multiple
               id="languages"
@@ -148,7 +158,7 @@ const CategoryAnalyticsPage = () => {
           </Grid>
         </Grid>
         {/* Display search results in Grid Component */}
-        {(isLoading || analyticsResults) && (
+        {(isLoading || Object.keys(analyticsResults.data).length > 0) && (
           <Box mt={4}>
             <Typography variant="h4" gutterBottom>
               Analytics
@@ -158,7 +168,28 @@ const CategoryAnalyticsPage = () => {
                 <CircularProgress />
               </div>
             ) : (
-                {/* Display Analytics Component */}
+              <Card variant="outlined" width="100%" sx={{ mt: 2, p: 2 }}>
+                <Table size='small'>
+                  <TableBody>
+                    {infoList.map(({ prop, value }) =>
+                      !!value && (
+                        <TableRow key={prop} >
+                          <TableCell sx={{ borderBottom: 'none' }}>
+                            <Typography variant='body1' fontWeight='bold' fontStyle='normal' lineHeight={1} mb={1}>
+                              {prop}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ borderBottom: 'none' }} align='right'>
+                            <Typography variant='body1' fontStyle='normal' lineHeight={1}>
+                              {value}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
             )}
           </Box>
         )}
