@@ -56,6 +56,7 @@ const NavBar = () => {
                 navigate(0);
               } else {
                 navigate("/randomMovie");
+                navigate(0);
               }
             }}
             sx={{ my: 2, mx: 2, color: 'inherit', display: 'block' }}
