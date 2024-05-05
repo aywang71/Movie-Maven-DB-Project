@@ -144,17 +144,16 @@ const BingeWatchPage = () => {
         </Grid>
         {/* Display search results in Grid Component */}
         {(isLoading || searchResults.length > 0) && (
-          <Box mt={4}>
-            <Typography variant="h4" gutterBottom>
-              Binge Schedule
-            </Typography>
-            {isLoading ? (
-                
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw' }}>
-                <CircularProgress />
-              </div>
+          <Box mt={4} justifyContent="center">
+            {isLoading ? (  
+              <CircularProgress />
             ) : (
+              <>
+                <Typography variant="h4" gutterBottom>
+                  Binge Schedule
+                </Typography>
                 <GridComponent items={searchResults} type={"movie"} binge={true}/>
+              </>
             )}
           </Box>
         )}

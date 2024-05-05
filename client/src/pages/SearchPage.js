@@ -172,16 +172,16 @@ const SearchPage = () => {
         {/* Display search results in Grid Component */}
 
         {(isLoading || searchResults.length > 0) && (
-          <Box mt={4}>
-            <Typography variant="h4" gutterBottom>
-              Top Results
-            </Typography>
+          <Box mt={4} justifyContent="center">
             {isLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw' }}>
                 <CircularProgress />
-              </div>
             ) : (
+              <>
+              <Typography variant="h4" gutterBottom>
+                Top Results
+              </Typography>
               <GridComponent items={searchResults} type={"movie"} />
+              </>
             )}
           </Box>
         )}

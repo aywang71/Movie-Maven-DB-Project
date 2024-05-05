@@ -159,15 +159,14 @@ const CategoryAnalyticsPage = () => {
         </Grid>
         {/* Display search results in Grid Component */}
         {(isLoading || Object.keys(analyticsResults.data).length > 0) && (
-          <Box mt={4}>
-            <Typography variant="h4" gutterBottom>
-              Analytics
-            </Typography>
+          <Box mt={4} justifyContent="center">
             {isLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw' }}>
                 <CircularProgress />
-              </div>
             ) : (
+              <>
+              <Typography variant="h4" gutterBottom>
+                Analytics
+              </Typography>
               <Card variant="outlined" width="100%" sx={{ mt: 2, p: 2 }}>
                 <Table size='small'>
                   <TableBody>
@@ -190,6 +189,7 @@ const CategoryAnalyticsPage = () => {
                   </TableBody>
                 </Table>
               </Card>
+              </>
             )}
           </Box>
         )}

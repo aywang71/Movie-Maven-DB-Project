@@ -84,11 +84,9 @@ const RecommendationPage = () => {
         </Grid>
         {/* Display search results in Grid Component */}
         {(movieIsLoading || providerIsLoading || movieRecommendations.length > 0 || providerRecommendations.length > 0) && (
-          <Box mt={4}>
+          <Box mt={4} justifyContent="center">
             {movieIsLoading || providerIsLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw' }}>
-                <CircularProgress />
-              </div>
+              <CircularProgress />
             ) : (
               <>
               <Typography variant="h4" gutterBottom>
