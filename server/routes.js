@@ -14,6 +14,7 @@ connection.connect((err) => err && console.log(err));
 
 // Route 1: GET /movie/:movie_id
 const movie = async function (req, res) {
+    console.log("Running /movie/movie_Id");
     const mid = req.params.movie_id;
     const query = `WITH genreID AS (
         SELECT id, COALESCE(GROUP_CONCAT(genre SEPARATOR ', '), '') AS genre
@@ -73,6 +74,7 @@ const movie = async function (req, res) {
 
 // Route 2: Filter movies
 const filtered_movies = async function (req, res) {
+    console.log("Running filtered_movies");
     const page = req.query.page ?? 1;
     const offsetAmt = (page - 1) * 50;
 
@@ -147,6 +149,7 @@ const filtered_movies = async function (req, res) {
 
 // Route 3: Movie recommendations
 const movie_recommendations = async function (req, res) {
+    console.log("Running /movie_recommendations");
     const moviesListArray = req.query.movies.split(',');
     const moviesList = '(' + moviesListArray.join(',') + ')';
     const numMovies = moviesListArray.length;
@@ -197,6 +200,7 @@ const movie_recommendations = async function (req, res) {
 
 // Route 4: Binge Watching
 const binge_watching = async function (req, res) {
+    console.log("Running binge_watching");
     const timeAvailable = req.query.time_available ?? 120;
     const maxRuntime = req.query.max_runtime ?? 180;
     const minRuntime = req.query.min_runtime ?? 60;
@@ -258,6 +262,7 @@ const binge_watching = async function (req, res) {
 
 // Route 5: Streaming services recommendations
 const provider_recommendations = async function (req, res) {
+    console.log("Running /providerRecs");
     const moviesListArray = (req.query.movies ?? '').split(',');
     const moviesList = '(' + moviesListArray.join(',') + ')';
     const numMovies = moviesListArray.length;
@@ -303,6 +308,7 @@ const provider_recommendations = async function (req, res) {
 
 // Route 6: /random
 const random = async function (req, res) {
+    console.log("Running /random");
     let random = Math.floor(Math.random() * (687173));
 
     const rand = `SELECT id FROM ViewRandom
@@ -370,6 +376,7 @@ const random = async function (req, res) {
 
 //Route 7: /userList/?movies=
 const userList = async function (req, res) {
+    console.log("Running /userList");
     let movies = req.query.movies ?? '';
     if (movies === '') {
         res.status(500).json({ error: "No movies parameter in API call" });
@@ -400,6 +407,7 @@ const userList = async function (req, res) {
 
 // Route 8: /groupSingle/:table_name/:filter_group
 const groupSingle = async function (req, res) { //maybe make a view due to runtime constraints
+    console.log("Running /groupSingle");
     const group = req.params.table_name;
     const filter = req.params.filter_group;
     let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `;
@@ -430,6 +438,7 @@ const groupSingle = async function (req, res) { //maybe make a view due to runti
 
 // Route 9: groupMulti
 const groupMulti = async function (req, res) {
+    console.log("Running /groupMulti");
     //Note: always searches for intersections among all groups
     //Expected format: 'table1,table2,table3...' 
     //Filters: 'filter1,filter2,filter3...'
@@ -501,6 +510,7 @@ const groupMulti = async function (req, res) {
 
 // Route 10: /platformData/:platform_name
 const platformData = async function (req, res) {
+    console.log("Running /paltformData/platformname");
     const plat = req.params.platform_name;
     const query = `WITH platform AS (
         select platform_id as pid, provider_logo as logo from Providers
@@ -530,6 +540,7 @@ const platformData = async function (req, res) {
 
 // Route 11 : /quickSearch/:title
 const quickSearch = async function (req, res) {
+    console.log("Running /quickSearch");
     const title = req.params.title;
     const query = `select id, title, release_date, poster_path, overview from ViewMoviesPopular where title like '%${title}%' limit 20;`
     connection.query(query, (err, data) => {
@@ -544,6 +555,7 @@ const quickSearch = async function (req, res) {
 
 // Route 12: /topMovies/genres/:genre
 const topGenres = async function (req, res) {
+    console.log("Running /topMovies/genres");
     const genre = req.params.genre;
     const query = `select * from ViewGenreMovies where genre = '${genre}'
     order by RAND()
@@ -560,6 +572,7 @@ const topGenres = async function (req, res) {
 
 // Route 13: /topMovies/providers/:provider
 const topProviders = async function (req, res) {
+    console.log("Running /topMovies/providers");
     const provider = req.params.provider;
     //console.log(provider);
     const query = `select *
@@ -580,6 +593,7 @@ const topProviders = async function (req, res) {
 
 // Route 14: /topMovies
 const topMovies = async function (req, res) {
+    console.log("Running /topMovies");
     const query = `select *
     from ViewGenreMovies
     order by RAND()
