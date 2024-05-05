@@ -202,13 +202,14 @@
     ],
     "groupSingle":[
         {
+            "genre": "Comedy",
             "num_movies": 75021,
-            "vote_average": 5.8637218117345276,
+            "vote_average": 5.86372,
             "vote_count": 86.4418,
-            "avg_revenue": 3240301.5345969796,
-            "avg_budget": 1171468.1953053146,
+            "avg_revenue": 3240300,
+            "avg_budget": 1171470,
             "avg_runtime": 71.7493,
-            "avg_popularity": 3.2139135745945198
+            "avg_popularity": 3.21391
         }
     ],
     "userListempty":{
@@ -228,13 +229,14 @@
     },
     "englishStats":[
         {
+            "language": "English",
             "num_movies": 134773,
-            "vote_average": 6.11101967755605,
-            "vote_count": 137.7209,
-            "avg_revenue": 4890039.079682132,
-            "avg_budget": 1862827.9220615404,
+            "vote_average": 6.11102,
+            "vote_count": 137.721,
+            "avg_revenue": 4890040,
+            "avg_budget": 1862830,
             "avg_runtime": 82.0041,
-            "avg_popularity": 4.001216753237839
+            "avg_popularity": 4.00122
         }
     ],
     "tableDNE":{
@@ -256,13 +258,14 @@
     },
     "JVC":[
         {
+            "company": "JVC",
             "num_movies": 31,
-            "vote_average": 6.139838710907967,
-            "vote_count": 436.4516,
-            "avg_revenue": 18752741.48387097,
-            "avg_budget": 10477419.387096774,
-            "avg_runtime": 104.3871,
-            "avg_popularity": 10.690290479890761
+            "vote_average": 6.13984,
+            "vote_count": 436.452,
+            "avg_revenue": 18752700,
+            "avg_budget": 10477400,
+            "avg_runtime": 104.387,
+            "avg_popularity": 10.6903
         }
     ],
     "providerRec":[
