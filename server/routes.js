@@ -15,7 +15,9 @@ connection.connect((err) => err && console.log(err));
 // Route 1: GET /movie/:movie_id
 const movie = async function (req, res) {
     console.log("Running /movie/movie_Id");
+    // pull out params
     const mid = req.params.movie_id;
+    // multiple joins to get all code into one row 
     const query = `WITH genreID AS (
         SELECT id, COALESCE(GROUP_CONCAT(genre SEPARATOR ', '), '') AS genre
     FROM Genres
@@ -59,9 +61,10 @@ const movie = async function (req, res) {
     WHERE Movies.id = ${mid}
     ORDER BY Movies.popularity DESC
     `;
+    // logic to return data
     connection.query(query, (err, data) => {
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data.length === 0) {
             res.status(500).json({ error: "No results returned (nonexistent mid)" });
@@ -75,9 +78,9 @@ const movie = async function (req, res) {
 // Route 2: Filter movies
 const filtered_movies = async function (req, res) {
     console.log("Running filtered_movies");
+    // pull out endpoint parameters, or default to max/min if they are not provided
     const page = req.query.page ?? 1;
     const offsetAmt = (page - 1) * 50;
-
     const minAvg = req.query.min_avg ?? 0;
     const maxAvg = req.query.max_avg ?? 10;
     const minCount = req.query.min_count ?? 0;
@@ -89,9 +92,9 @@ const filtered_movies = async function (req, res) {
     let genreSub = '';
     let genreCondition = '';
 
+    // conditional addition onto the query based on any geners filtered on 
     if (listGenres != null) {
         const genresListArray = listGenres.split(',');
-
         for (i = 0; i < genresListArray.length; i++) {
             if (i == genresListArray.length - 1) {
                 const str = `
@@ -114,6 +117,7 @@ const filtered_movies = async function (req, res) {
         genreCondition = `AND id IN (${genreSub})`;
     }
 
+    // same thing for providers filters
     const listProviders = req.query.providers_list;
     let providerSub = '';
     let providerCondition = '';
@@ -126,6 +130,7 @@ const filtered_movies = async function (req, res) {
         providerCondition = `AND id IN (${providerSub})`;
     }
 
+    // logic to return data
     connection.query(`
     SELECT id, title, poster_path, release_date, vote_average
     FROM Movies
@@ -139,7 +144,7 @@ const filtered_movies = async function (req, res) {
     OFFSET ${offsetAmt};
     `, (err, data) => {
         if (err || data.length == 0) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({});
         } else {
             res.status(200).json(data);
@@ -150,10 +155,12 @@ const filtered_movies = async function (req, res) {
 // Route 3: Movie recommendations
 const movie_recommendations = async function (req, res) {
     console.log("Running /movie_recommendations");
+    // pull out params
     const moviesListArray = req.query.movies.split(',');
     const moviesList = '(' + moviesListArray.join(',') + ')';
     const numMovies = moviesListArray.length;
 
+    // parameterized query based on inputs 
     connection.query(`
     WITH Genre_Ratios AS (
         SELECT genre, COUNT(id) / ${numMovies} AS ratio
@@ -201,12 +208,14 @@ const movie_recommendations = async function (req, res) {
 // Route 4: Binge Watching
 const binge_watching = async function (req, res) {
     console.log("Running binge_watching");
+    // pull out queries or set defaults if none given 
     const timeAvailable = req.query.time_available ?? 120;
     const maxRuntime = req.query.max_runtime ?? 180;
     const minRuntime = req.query.min_runtime ?? 60;
     const listGenres = req.query.genres_list;
     let genreCondition = '';
 
+    // logic to reformat list type inputs 
     if (listGenres != null) {
         const genresListArray = listGenres.split(',');
         const genresList = '(' + genresListArray.map(genre => `'${genre}'`).join(',') + ')';
@@ -222,6 +231,7 @@ const binge_watching = async function (req, res) {
         providerCondition = `AND platform_id IN ${providersList}`
     }
 
+    // handles query execution and return 
     connection.query(`
     WITH Filtered_Movies AS (
         SELECT DISTINCT id, title, poster_path, runtime, release_date, vote_average
@@ -233,7 +243,7 @@ const binge_watching = async function (req, res) {
             AND runtime >= ${minRuntime}
             ${genreCondition} ${providerCondition}
         ORDER BY vote_average DESC
-    ), Selected_Movies AS (
+    ), SELECTed_Movies AS (
         SELECT id, title, poster_path, runtime, release_date, vote_average,
               CASE
                   WHEN @total_time + runtime <= ${timeAvailable} THEN @total_time := @total_time + runtime
@@ -249,7 +259,7 @@ const binge_watching = async function (req, res) {
           release_date,
           cumulative_time,
           AVG(vote_average) OVER (ORDER BY vote_average DESC) AS avg_vote
-    FROM Selected_Movies;
+    FROM SELECTed_Movies;
     `, (err, data) => {
         if (err || data.length == 0) {
             console.log(err);
@@ -263,12 +273,14 @@ const binge_watching = async function (req, res) {
 // Route 5: Streaming services recommendations
 const provider_recommendations = async function (req, res) {
     console.log("Running /providerRecs");
+    // pull out args into endpoint and set defaults if not there
     const moviesListArray = (req.query.movies ?? '').split(',');
     const moviesList = '(' + moviesListArray.join(',') + ')';
     const numMovies = moviesListArray.length;
     const streamingTypesArray = (req.query.types ?? 'free,ads,flatrate').split(',')
     const streamingTypes = '(' + streamingTypesArray.map(type => `'${type}'`).join(',') + ')';
 
+    // execute query and handle error logic 
     connection.query(`
     WITH Matching_Offers AS (
         SELECT *
@@ -298,7 +310,7 @@ const provider_recommendations = async function (req, res) {
     ORDER BY pi.pct_movies DESC, pi.display_priority ASC;
     `, (err, data) => {
         if (err || data == undefined) {
-            // console.log(err);
+            console.log(err);
             res.status(500).json({ "error": "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -309,14 +321,15 @@ const provider_recommendations = async function (req, res) {
 // Route 6: /random
 const random = async function (req, res) {
     console.log("Running /random");
+    // runs random on backend to reduce cost
     let random = Math.floor(Math.random() * (687173));
 
+    // execute query, nested query so that we can also return data
     const rand = `SELECT id FROM ViewRandom
     LIMIT 1 OFFSET ${random}`; //ViewRandom has adult movies removed
     connection.query(rand, (err, data) => {
 
         const mid = data[0].id;
-        //console.log(mid);
         const query = `WITH genreID AS (
                 SELECT id, COALESCE(GROUP_CONCAT(genre SEPARATOR ', '), '') AS genre
             FROM Genres
@@ -361,9 +374,7 @@ const random = async function (req, res) {
             ORDER BY Movies.popularity DESC
             `;
         connection.query(query, (err, data2) => {
-            //console.log(data2);
             if (err) {
-                //console.log(err);
                 res.status(500).json({ error: "Error querying the database" });
             } else {
                 data2[0].id = mid;
@@ -377,13 +388,14 @@ const random = async function (req, res) {
 //Route 7: /userList/?movies=
 const userList = async function (req, res) {
     console.log("Running /userList");
+    // format based on provided list 
     let movies = req.query.movies ?? '';
     if (movies === '') {
         res.status(500).json({ error: "No movies parameter in API call" });
     } else {
-        let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
-        from Movies
-        where id in (`;
+        let query = `SELECT COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
+        FROM Movies
+        WHERE id in (`;
         movies = movies.split(',');
         let i = 0;
         while (i < movies.length) {
@@ -392,9 +404,9 @@ const userList = async function (req, res) {
         }
         query = query.substring(0, query.length - 1);
         query += ')';
+        // logic to handle query execution and formatting 
         connection.query(query, (err, data) => {
             if (err) {
-                //console.log(err);
                 res.status(500).json({ error: "Error querying the database" });
             } else if (data[0].num_movies === 0) {
                 res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -408,17 +420,19 @@ const userList = async function (req, res) {
 // Route 8: /groupSingle/:table_name/:filter_group
 const groupSingle = async function (req, res) { //maybe make a view due to runtime constraints
     console.log("Running /groupSingle");
+    // pull out params
     const group = req.params.table_name;
+
     const filter = req.params.filter_group;
-    let query = `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `; //to optimize, just use this code but on a grouped result instead
+    // original SELECTion code prior to caching 
+    let query = `SELECT COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity `; //to optimize, just use this code but on a grouped result instead
+    // pulls in cached tables depending on table to query for optimization 
     if (group === "Genres") {
-        query = `SELECT * from ViewGenresStats where genre = '${filter}'`;
+        query = `SELECT * FROM ViewGenresStats WHERE genre = '${filter}'`;
     } else if (group === "ProductionCompanies") {
-        query = `SELECT * from ViewCompaniesStats where company = '${filter}'`;
-        //query += `from ProductionCompanies join Movies on ProductionCompanies.id = Movies.id where company = '${filter}' AND vote_count > 0`;
+        query = `SELECT * FROM ViewCompaniesStats WHERE company = '${filter}'`;
     } else if (group === "SpokenLanguages") {
-        query = `SELECT * from ViewLanguageStats where language = '${filter}'`;
-        //query += `from SpokenLanguages join Movies on SpokenLanguages.id = Movies.id where language = '${filter}' AND vote_count > 0`;
+        query = `SELECT * FROM ViewLanguageStats WHERE language = '${filter}'`;
     } else {
         res.status(500).json({ error: "table_name parameter does not exist" });
         return;
@@ -445,7 +459,7 @@ const groupMulti = async function (req, res) {
     //Note: always searches for intersections among all groups
     //Expected format: 'table1,table2,table3...' 
     //Filters: 'filter1,filter2,filter3...'
-    //Where the is all attributes corresponding to the table: i.e for genres "('Comedy','Drama'), ... (next filter)"
+    //WHERE the is all attributes corresponding to the table: i.e for genres "('Comedy','Drama'), ... (next filter)"
     let tables = req.query.tables;
     tables = tables.split(",");
     const cols = {
@@ -462,46 +476,43 @@ const groupMulti = async function (req, res) {
     }
     let query = 'WITH';
     let ctejoin = `movies AS (
-        select vote_average, vote_count, revenue, budget, runtime, popularity 
+        SELECT vote_average, vote_count, revenue, budget, runtime, popularity 
         FROM Movies `;
     i = 0;
+    // parametric creation of the query based on provided tables and list of filters
     while (i < tables.length) {
-        //console.log(i);
         if (tables[i] === 'Providers') {
             query += ` Providers2 AS (
-                select platform_id as pid
-                from Providers
-                where provider IN ${filters[i]}),
+                SELECT platform_id as pid
+                FROM Providers
+                WHERE provider IN ${filters[i]}),
                 Providers AS (
-                    select id from MovieStreaming
+                    SELECT id FROM MovieStreaming
                     join Providers2 on Providers2.pid = MovieStreaming.platform_id
                     GROUP BY id
                     HAVING COUNT(id) = ${filters[i].split(',').length}
                 ),`;
         } else {
             query += ` ${tables[i]} AS (
-                select id
-                from ${tables[i]}
-                where ${cols[tables[i]]} IN ${filters[i]}
+                SELECT id
+                FROM ${tables[i]}
+                WHERE ${cols[tables[i]]} IN ${filters[i]}
                 GROUP BY id
                 HAVING COUNT(id) = ${filters[i].split(',').length}
             ),`;
         }
         ctejoin += `JOIN ${tables[i]} ON ${tables[i]}.id = Movies.id `;
-        //console.log(query);
         i++;
     }
     query = query + ctejoin + ')';
-    query += `select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
+    query += `SELECT COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity
     FROM movies
     WHERE vote_count > 0`;
 
-    //console.log(query);
-
+    // handle query logic and return 
     connection.query(query, (err, data) => {
-        //console.log(data[0].num_movies);
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -514,24 +525,25 @@ const groupMulti = async function (req, res) {
 // Route 10: /platformData/:platform_name
 const platformData = async function (req, res) {
     console.log("Running /paltformData/platformname");
+    // pull params
     const plat = req.params.platform_name;
     const query = `WITH platform AS (
-        select platform_id as pid, provider_logo as logo from Providers
-                 where provider = '${plat}'
+        SELECT platform_id as pid, provider_logo as logo FROM Providers
+                 WHERE provider = '${plat}'
     ),
     
         ids AS (
-                select * from MovieStreaming
+                SELECT * FROM MovieStreaming
                 join platform on platform.pid = MovieStreaming.platform_id
             )
-            select COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity, logo
-            from Movies join ids on ids.id = Movies.id
+            SELECT COUNT(*) AS num_movies, AVG(vote_average) AS vote_average, AVG(vote_count) AS vote_count, AVG(revenue) AS avg_revenue, AVG(budget) AS avg_budget, AVG(runtime) AS avg_runtime, AVG(popularity) AS avg_popularity, logo
+            FROM Movies join ids on ids.id = Movies.id
             WHERE vote_count > 0`;
 
+    // handle query logic and return 
     connection.query(query, (err, data) => {
-        //console.log(data[0].num_movies);
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else if (data[0].num_movies === 0) {
             res.status(500).json({ error: "No results returned (nonexistent filter))" });
@@ -544,11 +556,13 @@ const platformData = async function (req, res) {
 // Route 11 : /quickSearch/:title
 const quickSearch = async function (req, res) {
     console.log("Running /quickSearch");
+    // pull params
     const title = req.params.title;
-    const query = `select id, title, release_date, poster_path, overview from ViewMoviesPopular where title like '%${title}%' limit 20;`
+    const query = `SELECT id, title, release_date, poster_path, overview FROM ViewMoviesPopular WHERE title like '%${title}%' limit 20;`
+    // handle query logic and return 
     connection.query(query, (err, data) => {
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -559,13 +573,15 @@ const quickSearch = async function (req, res) {
 // Route 12: /topMovies/genres/:genre
 const topGenres = async function (req, res) {
     console.log("Running /topMovies/genres");
+    // pull params
     const genre = req.params.genre;
-    const query = `select * from ViewGenreMovies where genre = '${genre}'
+    const query = `SELECT * FROM ViewGenreMovies WHERE genre = '${genre}'
     order by RAND()
     limit 24;`;
+    // handle query logic and return 
     connection.query(query, (err, data) => {
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -578,15 +594,15 @@ const topProviders = async function (req, res) {
     console.log("Running /topMovies/providers");
     const provider = req.params.provider;
     //console.log(provider);
-    const query = `select *
-    from ViewProviderMovies
-    where platform_id = (select platform_id from Providers where provider = '${provider}')
+    const query = `SELECT *
+    FROM ViewProviderMovies
+    WHERE platform_id = (SELECT platform_id FROM Providers WHERE provider = '${provider}')
     order by RAND()
     limit 24;`;
-    //console.log(query);
+    // handle query logic and return 
     connection.query(query, (err, data) => {
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
@@ -597,14 +613,14 @@ const topProviders = async function (req, res) {
 // Route 14: /topMovies
 const topMovies = async function (req, res) {
     console.log("Running /topMovies");
-    const query = `select distinct id, title, poster_path, release_date, vote_average
-    from ViewGenreMovies
+    const query = `SELECT distinct id, title, poster_path, release_date, vote_average
+    FROM ViewGenreMovies
     order by RAND()
     limit 24;`;
-    //console.log(query);
+    // handle query logic and return 
     connection.query(query, (err, data) => {
         if (err) {
-            //console.log(err);
+            console.log(err);
             res.status(500).json({ error: "Error querying the database" });
         } else {
             res.status(200).json(data);
